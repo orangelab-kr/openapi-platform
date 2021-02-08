@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource dbModel {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator clientModel {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+// 플랫폼
+model PlatformModel {
+  platformId String @id @default(uuid())
+  
+  platformName String
+
+  users PlatformUserModel[]
+  accessKeys PlatformAccessKeyModel[]
+  logs PlatformLogModel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+// 플랫폼 사용자
+model PlatformUserModel {
+  platformUserId String @id @default(uuid())
+
+  platformId String
+  platform PlatformModel @relation(fields: [platformId])
+
+  name String
+  email String
+  phone String
+
+  methods PlatformUserMethodModel[]
+  permissionGroup PermissionGroupModel
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+
+// 플랫폼 로그인 연동 제공자
+enum PlatformUserMethodProvider {
+  LOCAL // 로컬(이메일, 비밀번호)
+}
+
+// 플랫폼 로그인 연동
+model PlatformUserMethodModel {
+  platformUserMethodId String @id @default(cuid())
+
+  provider PlatformUserMethodProvider
+  identity String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+
+// 플랫폼 사용자 세션
+model PlatformUserSessionModel {
+  platformUserSessionId String @id
+
+  platformUserId String
+  platformUser PlatformUserModel @relation(fields: [platformUserId])
+  userAgent String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+// 플랫폼 로그 타입
+enum PlatformLogType {
+  LOGIN
+
+  USER_CREATE
+  USER_MODIFY
+  USER_DELETE
+
+  ACCESS_KEY_CREATE
+  ACCESS_KEY_MODIFY
+  ACCESS_KEY_DELETE
+}
+
+// 플랫폼 사용자 기록
+model PlatformLogModel {
+  platformUserLogId String @id @default(cuid())
+
+  PlatformLogType PlatformLogType
+
+  platformUser PlatformUserModel?
+  platformAccessKey PlatformAccessKeyModel?
+
+  message String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+// 플랫폼 접근 키
+model PlatformAccessKeyModel {
+  isEnabled Boolean @default(true)
+
+  platformAccessKeyName String
+  platformAccessKeyId String @id @default(uuid())
+  platformSecretAccessKey String @default(uuid())
+
+  platformId String
+  platform PlatformModel @relation(fields: [platformId])
+
+  permissionGroup PermissionGroupModel
+
+  usedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+
+// 플랫폼 사용자/어세스 키 권한
+model PermissionModel {
+  permissionId String @id
+
+  name String
+  description String @default("")
+
+  permissionGroup PermissionGroupModel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 플랫폼 권한 그룹
+model PermissionGroupModel {
+  permissionGroupId String @id @default(uuid())
+
+  name String
+  description String @default("")
+
+  platform PlatformModel?
+  permissions PermissionModel[]
+
+  users PlatformUserModel[]
+  accessKeys PlatformAccessKeyModel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
