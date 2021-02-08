@@ -1,8 +1,8 @@
+import { InternalError, OPCODE, Wrapper } from '../tools';
 import express, { Application } from 'express';
 
-import InternalError from '../tools/error';
-import OPCODE from '../tools/opcode';
-import Wrapper from '../tools/wrapper';
+import { InternalMiddleware } from '../middlewares';
+import getInternalRouter from './internal';
 import logger from '../tools/logger';
 import morgan from 'morgan';
 import os from 'os';
@@ -17,12 +17,14 @@ export default function getRouter(): Application {
   router.use(logging);
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
+  router.use('/internal', InternalMiddleware(), getInternalRouter());
 
   router.get(
     '/',
     Wrapper(async (_req, res) => {
       res.json({
         opcode: OPCODE.SUCCESS,
+        name: 'openapi-platform',
         mode: process.env.NODE_ENV,
         cluster: hostname,
       });
@@ -32,7 +34,7 @@ export default function getRouter(): Application {
   router.all(
     '*',
     Wrapper(async () => {
-      throw new InternalError('Invalid API', 404);
+      throw new InternalError('Invalid API');
     })
   );
 
