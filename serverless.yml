@@ -1,4 +1,5 @@
-service: 'serverless-template'
+service: 'openapi-platform'
+useDotenv: true
 
 provider:
   name: aws
@@ -16,6 +17,9 @@ plugins:
 custom:
   webpack:
     includeModules: true
+    packagerOptions:
+      scripts:
+        - prisma generate
   serverless-offline:
     noPrependStageInUrl: true
 
