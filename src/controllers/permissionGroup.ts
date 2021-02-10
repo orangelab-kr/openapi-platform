@@ -1,5 +1,5 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 
 const { prisma } = Database;
 export default class PermissionGroup {
@@ -98,14 +98,19 @@ export default class PermissionGroup {
   ): Promise<PermissionGroupModel> {
     const schema = Joi.object({
       name: PATTERN.PERMISSION.GROUP.NAME,
-      permissions: PATTERN.PERMISSION.MULTIPLE,
+      description: PATTERN.PERMISSION.GROUP.DESCRIPTION,
+      permissionIds: PATTERN.PERMISSION.MULTIPLE,
     });
 
-    const { name, permissions } = await schema.validateAsync(props);
+    const { name, description, permissionIds } = await schema.validateAsync(
+      props
+    );
+
     const data: Prisma.PermissionGroupModelCreateInput = {
       name,
+      description,
       permissions: {
-        connect: permissions.map((permissionId: string) => ({
+        connect: permissionIds.map((permissionId: string) => ({
           permissionId,
         })),
       },
@@ -126,15 +131,15 @@ export default class PermissionGroup {
   /** 권한 그룹을 수정합니다. */
   public static async modifyPermissionGroup(
     permissionGroupId: string,
-    props: { name: string; description: string; permissions: string[] }
+    props: { name: string; description: string; permissionIds: string[] }
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.PERMISSION.NAME,
       description: PATTERN.PERMISSION.GROUP.DESCRIPTION,
-      permissions: PATTERN.PERMISSION.MULTIPLE,
+      permissionIds: PATTERN.PERMISSION.MULTIPLE,
     });
 
-    const { name, description, permissions } = await schema.validateAsync(
+    const { name, description, permissionIds } = await schema.validateAsync(
       props
     );
 
@@ -144,7 +149,7 @@ export default class PermissionGroup {
         name,
         description,
         permissions: {
-          set: permissions.map((permissionId: string) => ({ permissionId })),
+          set: permissionIds.map((permissionId: string) => ({ permissionId })),
         },
       },
     });

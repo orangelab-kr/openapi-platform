@@ -4,14 +4,13 @@ import {
   PlatformUserSessionModel,
   Prisma,
 } from '@prisma/client';
-
+import { hashSync } from 'bcryptjs';
+import { OPCODE } from '../tools';
 import Database from '../tools/database';
 import InternalError from '../tools/error';
 import Joi from '../tools/joi';
-import { OPCODE } from '../tools';
 import PATTERN from '../tools/pattern';
 import PermissionGroup from './permissionGroup';
-import { hashSync } from 'bcryptjs';
 
 const { prisma } = Database;
 
@@ -212,6 +211,7 @@ export default class User {
     const { platformId } = platform;
     const user = await prisma.platformUserModel.findFirst({
       where: { platformUserId, platform: { platformId } },
+      include: { permissionGroup: true },
     });
 
     return user;

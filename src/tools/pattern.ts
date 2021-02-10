@@ -14,11 +14,11 @@ const PATTERN = {
     MULTIPLE: Joi.array().items(Joi.string()).required(),
     ID: Joi.string().min(2).max(16).required(),
     NAME: Joi.string().min(2).max(16).required(),
-    DESCRIPTION: Joi.string().default('').max(64).optional(),
+    DESCRIPTION: Joi.string().default('').allow('').max(64).optional(),
     GROUP: {
       ID: Joi.string().uuid().required(),
       NAME: Joi.string().min(2).max(16).required(),
-      DESCRIPTION: Joi.string().default('').max(64).optional(),
+      DESCRIPTION: Joi.string().default('').allow('').max(64).optional(),
     },
   },
   PLATFORM: {
