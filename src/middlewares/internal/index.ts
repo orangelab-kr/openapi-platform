@@ -24,7 +24,6 @@ export default function InternalMiddleware(): Callback {
     }
 
     const key = process.env.HIKICK_OPENAPI_PLATFORM_KEY;
-    console.log(process.env);
     if (!key || !token) {
       throw new InternalError(
         '인증이 필요한 서비스입니다.',
