@@ -1,6 +1,8 @@
 import AccessKey from '../../../controllers/accessKey';
+import InternalPermissionMiddleware from '../../../middlewares/internal/permissions';
 import InternalPlatformAccessKeyMiddleware from '../../../middlewares/internal/platform/accessKey';
 import OPCODE from '../../../tools/opcode';
+import { PERMISSION } from '../../../middlewares/internal';
 import { Router } from 'express';
 import Wrapper from '../../../tools/wrapper';
 
@@ -9,6 +11,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.get(
     '/',
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS),
     Wrapper(async (req, res) => {
       const { platform, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
@@ -22,6 +25,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.post(
     '/',
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_CREATE),
     Wrapper(async (req, res) => {
       const { platform, body } = req;
       const { platformAccessKeyId } = await AccessKey.createAccessKey(
@@ -35,6 +39,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.get(
     '/:platformAccessKeyId',
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_VIEW),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { platformAccessKey } = req;
@@ -44,6 +49,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.post(
     '/:platformAccessKeyId',
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_MODIFY),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { body, platformAccessKey } = req;
@@ -54,6 +60,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.delete(
     '/:platformAccessKeyId',
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_DELETE),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { platform, platformAccessKey } = req;

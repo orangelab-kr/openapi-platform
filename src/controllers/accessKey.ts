@@ -1,4 +1,3 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import {
   PermissionGroupModel,
   PermissionModel,
@@ -6,7 +5,7 @@ import {
   PlatformModel,
   Prisma,
 } from '@prisma/client';
-
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import PermissionGroup from './permissionGroup';
 
 const { prisma } = Database;
@@ -21,15 +20,15 @@ export default class AccessKey {
     const schema = Joi.object({
       platformAccessKeyId: PATTERN.PLATFORM.ACCESS_KEY.ID,
       platformSecretAccessKey: PATTERN.PLATFORM.ACCESS_KEY.SECRET,
-      permissionId: PATTERN.PERMISSION.MULTIPLE.optional(),
+      permissionIds: PATTERN.PERMISSION.MULTIPLE.optional(),
     });
 
     const {
       platformAccessKeyId,
       platformSecretAccessKey,
-      permissionId,
+      permissionIds,
     } = await schema.validateAsync(props);
-    const { findFirst } = prisma.platformAccessKeyModel;
+    const { findFirst, updateMany } = prisma.platformAccessKeyModel;
     const include: Prisma.PlatformAccessKeyModelInclude = {
       permissionGroup: { include: { permissions: true } },
     };
@@ -37,6 +36,10 @@ export default class AccessKey {
     const where: Prisma.PlatformAccessKeyModelWhereInput = {
       platformAccessKeyId,
       platformSecretAccessKey,
+    };
+
+    const data: Prisma.PlatformAccessKeyModelUpdateInput = {
+      usedAt: new Date(),
     };
 
     const accessKey: any = await findFirst({ include, where });
@@ -47,7 +50,8 @@ export default class AccessKey {
       );
     }
 
-    if (permissionId) AccessKey.hasPermissions(accessKey, permissionId);
+    if (permissionIds) AccessKey.hasPermissions(accessKey, permissionIds);
+    await updateMany({ where, data });
     return accessKey;
   }
 
@@ -67,7 +71,7 @@ export default class AccessKey {
       skip: PATTERN.PAGINATION.SKIP,
       search: PATTERN.PAGINATION.SEARCH,
       orderByField: PATTERN.PAGINATION.ORDER_BY.FIELD.valid(
-        'platformAccessKeyName',
+        'name',
         'platformAccessKeyId',
         'createdAt'
       ).default('createdAt'),
@@ -86,7 +90,7 @@ export default class AccessKey {
     const where: Prisma.PlatformAccessKeyModelWhereInput = {
       platform: { platformId },
       OR: [
-        { platformAccessKeyName: { contains: search } },
+        { name: { contains: search } },
         { platformAccessKeyId: { contains: search } },
       ],
     };
@@ -107,22 +111,19 @@ export default class AccessKey {
   /** 액세스 키를 생성합니다. */
   public static async createAccessKey(
     platform: PlatformModel,
-    props: { platformAccessKeyName: string; permissionGroupId: string }
+    props: { name: string; permissionGroupId: string }
   ): Promise<PlatformAccessKeyModel> {
     const schema = Joi.object({
-      platformAccessKeyName: PATTERN.PLATFORM.ACCESS_KEY.NAME,
+      name: PATTERN.PLATFORM.ACCESS_KEY.NAME,
       permissionGroupId: PATTERN.PERMISSION.GROUP.ID,
     });
 
     const { platformId } = platform;
-    const {
-      platformAccessKeyName,
-      permissionGroupId,
-    } = await schema.validateAsync(props);
+    const { name, permissionGroupId } = await schema.validateAsync(props);
     await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
     const accessKey = await prisma.platformAccessKeyModel.create({
       data: {
-        platformAccessKeyName,
+        name,
         platform: { connect: { platformId } },
         permissionGroup: { connect: { permissionGroupId } },
       },
@@ -171,19 +172,17 @@ export default class AccessKey {
   /** 액세스 키의 이름 또는 권한 그룹을 변경합니다. */
   public static async modifyAccessKey(
     platformAccessKey: PlatformAccessKeyModel,
-    props: { platformAccessKeyName: string; permissionGroupId: string }
+    props: { name: string; permissionGroupId: string }
   ): Promise<PlatformAccessKeyModel> {
     const schema = Joi.object({
       isEnabled: PATTERN.PLATFORM.ACCESS_KEY.IS_ENABLED.optional(),
-      platformAccessKeyName: PATTERN.PLATFORM.ACCESS_KEY.NAME.optional(),
+      name: PATTERN.PLATFORM.ACCESS_KEY.NAME.optional(),
       permissionGroupId: PATTERN.PERMISSION.GROUP.ID.optional(),
     });
 
-    const {
-      isEnabled,
-      platformAccessKeyName,
-      permissionGroupId,
-    } = await schema.validateAsync(props);
+    const { isEnabled, name, permissionGroupId } = await schema.validateAsync(
+      props
+    );
     const { platformAccessKeyId } = platformAccessKey;
     const where: Prisma.PlatformAccessKeyModelWhereUniqueInput = {
       platformAccessKeyId,
@@ -191,7 +190,7 @@ export default class AccessKey {
 
     const data: Prisma.PlatformAccessKeyModelUpdateInput = {
       isEnabled,
-      platformAccessKeyName,
+      name,
     };
 
     if (permissionGroupId) {

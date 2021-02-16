@@ -15,8 +15,7 @@ generator clientModel {
 model PlatformModel {
   platformId String @id @default(uuid())
   
-  platformName String
-
+  name String
   users PlatformUserModel[]
   accessKeys PlatformAccessKeyModel[]
   logs PlatformLogModel[]
@@ -38,7 +37,9 @@ model PlatformUserModel {
   phone String
 
   methods PlatformUserMethodModel[]
-  permissionGroup PermissionGroupModel
+
+  permissionGroupId String
+  permissionGroup PermissionGroupModel @relation(fields: [permissionGroupId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -110,14 +111,15 @@ model PlatformLogModel {
 model PlatformAccessKeyModel {
   isEnabled Boolean @default(true)
 
-  platformAccessKeyName String
+  name String
   platformAccessKeyId String @id @default(uuid())
   platformSecretAccessKey String @default(uuid())
 
   platformId String
   platform PlatformModel @relation(fields: [platformId])
 
-  permissionGroup PermissionGroupModel
+  permissionGroupId String
+  permissionGroup PermissionGroupModel @relation(fields: [permissionGroupId])
 
   usedAt DateTime?
   createdAt DateTime @default(now())

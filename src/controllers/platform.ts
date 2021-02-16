@@ -1,16 +1,16 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import { PlatformModel, Prisma } from '@prisma/client';
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 
 const { prisma } = Database;
 
 export default class Platform {
   /** 플랫폼을 생성합니다. */
   public static async createPlatform(props: {
-    platformName: string;
+    name: string;
   }): Promise<PlatformModel> {
-    const schema = Joi.object({ platformName: PATTERN.PLATFORM.NAME });
-    const { platformName } = await schema.validateAsync(props);
-    const exists = await Platform.isExistsPlatformName(platformName);
+    const schema = Joi.object({ name: PATTERN.PLATFORM.NAME });
+    const { name } = await schema.validateAsync(props);
+    const exists = await Platform.isExistsPlatformName(name);
     if (exists) {
       throw new InternalError(
         '이미 존재하는 플랫폼 이름입니다.',
@@ -19,7 +19,7 @@ export default class Platform {
     }
 
     const platform = await prisma.platformModel.create({
-      data: { platformName },
+      data: { name },
     });
 
     return platform;
@@ -29,15 +29,15 @@ export default class Platform {
   public static async modifyPlatform(
     platform: PlatformModel,
     props: {
-      platformName?: string;
+      name?: string;
     }
   ): Promise<void> {
-    const schema = Joi.object({ platformName: PATTERN.PLATFORM.NAME });
+    const schema = Joi.object({ name: PATTERN.PLATFORM.NAME });
 
-    const { platformId, platformName } = platform;
+    const { platformId, name } = platform;
     const data = await schema.validateAsync(props);
-    if (platformName !== props.platformName) {
-      const exists = await Platform.isExistsPlatformName(platformName);
+    if (name !== props.name) {
+      const exists = await Platform.isExistsPlatformName(name);
       if (exists) {
         throw new InternalError(
           '이미 존재하는 플랫폼 이름입니다.',
@@ -91,9 +91,9 @@ export default class Platform {
       skip: PATTERN.PAGINATION.SKIP,
       search: PATTERN.PAGINATION.SEARCH,
       orderByField: PATTERN.PAGINATION.ORDER_BY.FIELD.valid(
-        'platformName',
+        'name',
         'createdAt'
-      ).default('platformName'),
+      ).default('name'),
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT,
     });
 
@@ -108,7 +108,7 @@ export default class Platform {
     const where: Prisma.PlatformModelWhereInput = {
       OR: [
         { platformId: { contains: search } },
-        { platformName: { contains: search } },
+        { name: { contains: search } },
       ],
     };
 
@@ -126,11 +126,9 @@ export default class Platform {
   }
 
   /** 플랫폼 이름이 존재하는지 확인합니다. */
-  public static async isExistsPlatformName(
-    platformName: string
-  ): Promise<boolean> {
+  public static async isExistsPlatformName(name: string): Promise<boolean> {
     const exists = await prisma.platformModel.count({
-      where: { platformName },
+      where: { name },
     });
 
     return exists > 0;

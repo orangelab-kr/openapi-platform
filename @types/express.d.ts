@@ -7,6 +7,14 @@ declare global {
       platform: PlatformModel;
       platformUser: PlatformUserModel;
       platformAccessKey: PlatformAccessKeyModel;
+      internal: {
+        sub: string;
+        iss: string;
+        aud: string;
+        prs: string[];
+        iat: Date;
+        exp: Date;
+      };
     }
   }
 }

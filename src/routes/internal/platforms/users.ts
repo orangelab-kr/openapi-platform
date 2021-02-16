@@ -1,3 +1,7 @@
+import InternalPermissionMiddleware, {
+  PERMISSION,
+} from '../../../middlewares/internal/permissions';
+
 import { InternalPlatformUserMiddleware } from '../../../middlewares/internal';
 import OPCODE from '../../../tools/opcode';
 import { Router } from 'express';
@@ -9,6 +13,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.get(
     '/',
+    InternalPermissionMiddleware(PERMISSION.USERS),
     Wrapper(async (req, res) => {
       const { platform, query } = req;
       const { platformUsers, total } = await User.getUsers(platform, query);
@@ -18,6 +23,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.post(
     '/',
+    InternalPermissionMiddleware(PERMISSION.USERS_CREATE),
     Wrapper(async (req, res) => {
       const { platform, body } = req;
       const { platformUserId } = await User.createUser(platform, body);
@@ -27,6 +33,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.get(
     '/:platformUserId',
+    InternalPermissionMiddleware(PERMISSION.USERS_VIEW),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platformUser } = req;
@@ -36,6 +43,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.post(
     '/:platformUserId',
+    InternalPermissionMiddleware(PERMISSION.USERS_MODIFY),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { body, platformUser } = req;
@@ -46,6 +54,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.delete(
     '/:platformUserId',
+    InternalPermissionMiddleware(PERMISSION.USERS_DELETE),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platform, platformUser } = req;
