@@ -1,14 +1,16 @@
-import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
 import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
 
 const { prisma } = Database;
 export default class PermissionGroup {
   /** 권한 그룹을 불러옵니다. 없으면 오류를 발생합니다. */
   public static async getPermissionGroupOrThrow(
-    permissionGroupId: string
+    permissionGroupId: string,
+    platform?: PlatformModel
   ): Promise<PermissionGroupModel> {
     const permissionGroup = await PermissionGroup.getPermissionGroup(
-      permissionGroupId
+      permissionGroupId,
+      platform
     );
 
     if (!permissionGroup) {
@@ -23,11 +25,18 @@ export default class PermissionGroup {
 
   /** 권한 그룹을 가져옵니다. */
   public static async getPermissionGroup(
-    permissionGroupId: string
+    permissionGroupId: string,
+    platform?: PlatformModel
   ): Promise<PermissionGroupModel | null> {
+    const OR: any = [{ platformId: null }];
+    if (platform) {
+      const { platformId } = platform;
+      OR.push({ platformId });
+    }
+
     const { findFirst } = prisma.permissionGroupModel;
     const permissionGroup = await findFirst({
-      where: { permissionGroupId },
+      where: { permissionGroupId, OR },
       include: { platform: true, permissions: true },
     });
 
@@ -67,12 +76,12 @@ export default class PermissionGroup {
     const orderBy = { [orderByField]: orderBySort };
     const where: any = {
       name: { contains: search },
-      OR: [{ platform: null }],
+      OR: [{ platformId: null }],
     };
 
     if (platform) {
       const { platformId } = platform;
-      where.OR.push({ platform: { platformId } });
+      where.OR.push({ platformId });
     }
 
     const [total, permissionGroups] = await prisma.$transaction([
@@ -131,7 +140,8 @@ export default class PermissionGroup {
   /** 권한 그룹을 수정합니다. */
   public static async modifyPermissionGroup(
     permissionGroupId: string,
-    props: { name: string; description: string; permissionIds: string[] }
+    props: { name: string; description: string; permissionIds: string[] },
+    platform?: PlatformModel
   ): Promise<void> {
     const schema = Joi.object({
       name: PATTERN.PERMISSION.NAME,
@@ -142,6 +152,13 @@ export default class PermissionGroup {
     const { name, description, permissionIds } = await schema.validateAsync(
       props
     );
+
+    if (platform) {
+      await PermissionGroup.getPermissionGroupOrThrow(
+        permissionGroupId,
+        platform
+      );
+    }
 
     await prisma.permissionGroupModel.update({
       where: { permissionGroupId },
@@ -157,13 +174,22 @@ export default class PermissionGroup {
 
   /** 권한 그룹을 삭제합니다. */
   public static async deletePermissionGroup(
-    permissionGroupId: string
+    permissionGroupId: string,
+    platform?: PlatformModel
   ): Promise<void> {
+    const include = { users: true, accessKeys: true };
+    const where: Prisma.PermissionGroupModelWhereInput = {
+      permissionGroupId,
+      OR: [{ platformId: null }],
+    };
+
+    if (platform && where.OR instanceof Array) {
+      const { platformId } = platform;
+      where.OR.push({ platformId });
+    }
+
     const { findFirst, deleteMany } = prisma.permissionGroupModel;
-    const permissionGroup = await findFirst({
-      where: { permissionGroupId },
-      include: { users: true, accessKeys: true },
-    });
+    const permissionGroup = await findFirst({ where, include });
 
     if (!permissionGroup) {
       throw new InternalError(

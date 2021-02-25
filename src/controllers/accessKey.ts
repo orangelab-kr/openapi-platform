@@ -1,3 +1,4 @@
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import {
   PermissionGroupModel,
   PermissionModel,
@@ -5,7 +6,7 @@ import {
   PlatformModel,
   Prisma,
 } from '@prisma/client';
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+
 import PermissionGroup from './permissionGroup';
 
 const { prisma } = Database;
@@ -30,6 +31,7 @@ export default class AccessKey {
     } = await schema.validateAsync(props);
     const { findFirst, updateMany } = prisma.platformAccessKeyModel;
     const include: Prisma.PlatformAccessKeyModelInclude = {
+      platform: true,
       permissionGroup: { include: { permissions: true } },
     };
 

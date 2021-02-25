@@ -5,17 +5,17 @@ import Wrapper, { Callback } from '../tools/wrapper';
 export default function PlatformMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const { headers } = req;
+    const platformAccessKeyId = `${headers['x-hikick-platform-access-key-id']}`;
     if (headers.authorization) {
       const platformUserSessionId = headers.authorization.substr(7);
       const session = await User.getUserSession(platformUserSessionId);
       req.platform = session.platformUser.platform;
       req.platformUser = session.platformUser;
-    } else if (headers['X-HIKICK-PLATFORM-ACCESS-KEY-ID']) {
+    } else if (platformAccessKeyId) {
+      const platformSecretAccessKey = `${headers['x-hikick-platform-secret-access-key']}`;
       const accessKey = await AccessKey.authorizeWithAccessKey({
-        platformAccessKeyId: String(headers['X-HIKICK-PLATFORM-ACCESS-KEY-ID']),
-        platformSecretAccessKey: String(
-          headers['X-HIKICK-PLATFORM-SECRET-ACCESS-KEY']
-        ),
+        platformAccessKeyId,
+        platformSecretAccessKey,
       });
 
       req.platform = accessKey.platform;
