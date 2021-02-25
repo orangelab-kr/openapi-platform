@@ -5,7 +5,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: ap-northeast-2
-  stage: prod
+  stage: ${opt:stage, 'prod'}
   lambdaHashingVersion: '20201221'
   apiGateway:
     shouldStartNameWithService: true

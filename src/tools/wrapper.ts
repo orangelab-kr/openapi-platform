@@ -16,7 +16,7 @@ export default function Wrapper(cb: Callback): Callback {
     try {
       return await cb(req, res, next);
     } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV === 'dev') {
         logger.error(err.message);
         logger.error(err.stack);
       }
