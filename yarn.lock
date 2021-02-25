@@ -2020,9 +2020,9 @@ color@3.0.x:
     color-string "^1.5.2"
 
 colorette@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.1.tgz#4d0b921325c14faf92633086a536db6e89564b1b"
-  integrity sha512-puCDz0CzydiSYOrnXpz/PKd69zRrribezjtE9yd4zvytoRc8+RY/KJPvtPFKZS3E3wP6neGyMe0vOTlHO5L3Pw==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
+  integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
 
 colornames@^1.1.1:
   version "1.1.1"
@@ -3646,9 +3646,9 @@ http-signature@~1.2.0:
     sshpk "^1.7.0"
 
 http2-wrapper@^1.0.0-beta.5.2:
-  version "1.0.0-beta.5.2"
-  resolved "https://registry.yarnpkg.com/http2-wrapper/-/http2-wrapper-1.0.0-beta.5.2.tgz#8b923deb90144aea65cf834b016a340fc98556f3"
-  integrity sha512-xYz9goEyBnC8XwXDTuC/MZ6t+MrKVQZOk4s7+PaDkwIsQd8IwqvM+0M6bA/2lvG8GHXcPdf+MejTUeO2LCPCeQ==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/http2-wrapper/-/http2-wrapper-1.0.1.tgz#cf25c3fa648041f038abb0b261d15d01988545de"
+  integrity sha512-4u2ARcyXepY27EXX/bpr6dT0vj7xjt7/EeLThyjam6YJsklyMFX0+F2s0tHHYEk9bXHOfb116XZJBsqUzXsACw==
   dependencies:
     quick-lru "^5.1.1"
     resolve-alpn "^1.0.0"
@@ -5831,9 +5831,9 @@ serverless-webpack@^5.3.5:
     ts-node ">= 8.3.0"
 
 serverless@^2.21.1:
-  version "2.27.0"
-  resolved "https://registry.yarnpkg.com/serverless/-/serverless-2.27.0.tgz#407c31c385139855a5b39c9bca1084b62658d962"
-  integrity sha512-0lQMIpehylEN8f2mIveM3w9Uw3xV+H07CiyL60I0uDaG01Pd80sJrUHfcxZ2hkg49m9qSshpixNcux0ZSU1ttQ==
+  version "2.27.1"
+  resolved "https://registry.yarnpkg.com/serverless/-/serverless-2.27.1.tgz#7570ea7c912ac65fc7780d0958e5514b2cc3089e"
+  integrity sha512-/6lkmzAcDKaHVIxGrbhYSXNMuGisQPFhyj3peCsPYX9Nv6xyprtMDigVj8DRvuy/d5rEUle9mkuvnyZFnCPIVA==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.7.1"

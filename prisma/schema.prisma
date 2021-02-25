@@ -54,7 +54,10 @@ enum PlatformUserMethodProvider {
 
 // 플랫폼 로그인 연동
 model PlatformUserMethodModel {
-  platformUserMethodId String @id @default(cuid())
+  platformUserMethodId String @id @default(uuid())
+
+  platformUserId String
+  platformUser PlatformUserModel @relation(fields: [platformUserId])
 
   provider PlatformUserMethodProvider
   identity String
@@ -93,12 +96,18 @@ enum PlatformLogType {
 
 // 플랫폼 사용자 기록
 model PlatformLogModel {
-  platformUserLogId String @id @default(cuid())
+  platformUserLogId String @id @default(uuid())
 
-  PlatformLogType PlatformLogType
+  platformLogType PlatformLogType
 
-  platformUser PlatformUserModel?
-  platformAccessKey PlatformAccessKeyModel?
+  platformId String
+  platform PlatformModel @relation(fields: [platformId])
+
+  platformUserId String?
+  platformUser PlatformUserModel? @relation(fields: [platformUserId])
+
+  platformAccessKeyId String?
+  platformAccessKey PlatformAccessKeyModel? @relation(fields: [platformAccessKeyId])
 
   message String
 
@@ -148,7 +157,8 @@ model PermissionGroupModel {
   name String
   description String @default("")
 
-  platform PlatformModel?
+  platformId String?
+  platform PlatformModel? @relation(fields: [platformId])
   permissions PermissionModel[]
 
   users PlatformUserModel[]
