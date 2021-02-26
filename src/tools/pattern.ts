@@ -1,10 +1,11 @@
 import Joi from './joi';
+import { PlatformLogType } from '@prisma/client';
 
 const PATTERN = {
   PAGINATION: {
     TAKE: Joi.number().default(10).optional(),
     SKIP: Joi.number().default(0).optional(),
-    SEARCH: Joi.string().valid('').optional(),
+    SEARCH: Joi.string().allow('').optional(),
     ORDER_BY: {
       FIELD: Joi.string().optional(),
       SORT: Joi.string().valid('asc', 'desc').default('asc').optional(),
@@ -30,7 +31,13 @@ const PATTERN = {
       SECRET: Joi.string().uuid().required(),
       IS_ENABLED: Joi.boolean().required(),
     },
+    LOG: {
+      TYPE: Joi.array()
+        .items(Joi.string().valid(...Object.keys(PlatformLogType)))
+        .required(),
+    },
     USER: {
+      ID: Joi.string().uuid().required(),
       NAME: Joi.string().min(2).max(16).required(),
       EMAIL: Joi.string().email().required(),
       PHONE: Joi.string()

@@ -8,6 +8,7 @@ import Platform from '../../../controllers/platform';
 import { Router } from 'express';
 import Wrapper from '../../../tools/wrapper';
 import getInternalPlatformsAccessKeysRouter from './accessKeys';
+import getInternalPlatformsLogsRouter from './logs';
 import getInternalPlatformsUsersRouter from './users';
 
 export default function getInternalPlatformsRouter(): Router {
@@ -23,6 +24,12 @@ export default function getInternalPlatformsRouter(): Router {
     '/:platformId/accessKeys',
     InternalPlatformMiddleware(),
     getInternalPlatformsAccessKeysRouter()
+  );
+
+  router.use(
+    '/:platformId/logs',
+    InternalPlatformMiddleware(),
+    getInternalPlatformsLogsRouter()
   );
 
   router.get(

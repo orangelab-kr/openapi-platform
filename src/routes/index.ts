@@ -5,6 +5,7 @@ import express, { Application } from 'express';
 import getAccessKeysRouter from './accessKeys';
 import getAuthRouter from './auth';
 import getInternalRouter from './internal';
+import getLogsRouter from './logs';
 import getPermissionGroupsRouter from './permissionGroups';
 import getUserRouter from './users';
 import logger from '../tools/logger';
@@ -23,6 +24,7 @@ export default function getRouter(): Application {
   router.use(express.urlencoded({ extended: true }));
   router.use('/internal', InternalMiddleware(), getInternalRouter());
   router.use('/auth', getAuthRouter());
+  router.use('/logs', PlatformMiddleware(), getLogsRouter());
   router.use('/users', PlatformMiddleware(), getUserRouter());
   router.use('/accessKeys', PlatformMiddleware(), getAccessKeysRouter());
   router.use(

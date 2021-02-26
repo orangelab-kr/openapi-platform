@@ -1,15 +1,19 @@
-import { Log } from '../controllers';
-import OPCODE from '../tools/opcode';
-import { Router } from 'express';
-import Wrapper from '../tools/wrapper';
+import { OPCODE, Wrapper } from '../../../tools';
 
-export default function getLogsRouter(): Router {
+import { Log } from '../../../controllers';
+import { Router } from 'express';
+
+export default function getInternalPlatformsLogsRouter(): Router {
   const router = Router();
 
   router.get(
     '/',
     Wrapper(async (req, res) => {
-      const { query, platform } = req;
+      const {
+        query,
+        internal: { platform },
+      } = req;
+
       const { total, platformLogs } = await Log.getLogs(query, platform);
       res.json({ opcode: OPCODE.SUCCESS, platformLogs, total });
     })
@@ -19,7 +23,7 @@ export default function getLogsRouter(): Router {
     '/:platformLogId',
     Wrapper(async (req, res) => {
       const {
-        platform,
+        internal: { platform },
         params: { platformLogId },
       } = req;
 
