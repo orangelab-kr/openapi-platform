@@ -3,6 +3,7 @@ import { InternalMiddleware, PlatformMiddleware } from '../middlewares';
 import express, { Application } from 'express';
 
 import getAccessKeysRouter from './accessKeys';
+import getAuthRouter from './auth';
 import getInternalRouter from './internal';
 import getPermissionGroupsRouter from './permissionGroups';
 import getUserRouter from './users';
@@ -21,6 +22,7 @@ export default function getRouter(): Application {
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
   router.use('/internal', InternalMiddleware(), getInternalRouter());
+  router.use('/auth', getAuthRouter());
   router.use('/users', PlatformMiddleware(), getUserRouter());
   router.use('/accessKeys', PlatformMiddleware(), getAccessKeysRouter());
   router.use(

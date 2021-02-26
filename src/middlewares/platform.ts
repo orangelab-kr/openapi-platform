@@ -1,17 +1,21 @@
-import { AccessKey, User } from '../controllers';
 import { InternalError, OPCODE } from '../tools';
 import Wrapper, { Callback } from '../tools/wrapper';
 
-export default function PlatformMiddleware(): Callback {
+import { AccessKey } from '../controllers';
+import Session from '../controllers/session';
+
+export default function PlatformMiddleware(
+  only: ('user' | 'accessKey')[] = ['user', 'accessKey']
+): Callback {
   return Wrapper(async (req, res, next) => {
     const { headers } = req;
     const platformAccessKeyId = `${headers['x-hikick-platform-access-key-id']}`;
-    if (headers.authorization) {
+    if (only.includes('user') && headers.authorization) {
       const platformUserSessionId = headers.authorization.substr(7);
-      const session = await User.getUserSession(platformUserSessionId);
+      const session = await Session.getUserSession(platformUserSessionId);
       req.platform = session.platformUser.platform;
       req.platformUser = session.platformUser;
-    } else if (platformAccessKeyId) {
+    } else if (only.includes('accessKey') && platformAccessKeyId) {
       const platformSecretAccessKey = `${headers['x-hikick-platform-secret-access-key']}`;
       const accessKey = await AccessKey.authorizeWithAccessKey({
         platformAccessKeyId,

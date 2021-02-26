@@ -1,16 +1,12 @@
-import {
-  PlatformModel,
-  PlatformUserModel,
-  PlatformUserSessionModel,
-  Prisma,
-} from '@prisma/client';
-import { hashSync } from 'bcryptjs';
-import { OPCODE } from '../tools';
+import { PlatformModel, PlatformUserModel, Prisma } from '@prisma/client';
+
 import Database from '../tools/database';
 import InternalError from '../tools/error';
 import Joi from '../tools/joi';
+import { OPCODE } from '../tools';
 import PATTERN from '../tools/pattern';
 import PermissionGroup from './permissionGroup';
+import { hashSync } from 'bcryptjs';
 
 const { prisma } = Database;
 
@@ -83,15 +79,15 @@ export default class User {
       email: string;
       phone: string;
       password: string;
-      permissionGroup: string;
+      permissionGroupId: string;
     }
   ): Promise<PlatformUserModel> {
     const schema = Joi.object({
-      name: PATTERN.PLATFORM.USER.NAME,
-      email: PATTERN.PLATFORM.USER.EMAIL,
-      phone: PATTERN.PLATFORM.USER.PHONE,
-      permissionGroupId: PATTERN.PERMISSION.GROUP.ID,
-      password: PATTERN.PLATFORM.USER.PASSWORD,
+      name: PATTERN.PLATFORM.USER.NAME.optional(),
+      email: PATTERN.PLATFORM.USER.EMAIL.optional(),
+      phone: PATTERN.PLATFORM.USER.PHONE.optional(),
+      permissionGroupId: PATTERN.PERMISSION.GROUP.ID.optional(),
+      password: PATTERN.PLATFORM.USER.PASSWORD.optional(),
     });
 
     const {
@@ -106,31 +102,39 @@ export default class User {
       User.isExistsPlatformUserPhone(phone),
     ]);
 
-    if (user.email !== email && isExists[0]) {
+    if (email && user.email !== email && isExists[0]) {
       throw new InternalError('사용중인 이메일입니다.', OPCODE.ALREADY_EXISTS);
     }
 
-    if (user.phone !== phone && isExists[1]) {
+    if (phone && user.phone !== phone && isExists[1]) {
       throw new InternalError(
         '사용중인 전화번호입니다.',
         OPCODE.ALREADY_EXISTS
       );
     }
 
-    await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
-    const { platformUserId } = user;
-    const identity = hashSync(password, 10);
-    await prisma.platformUserModel.update({
-      where: { platformUserId },
-      data: {
-        name,
-        email,
-        phone,
-        methods: { create: { provider: 'LOCAL', identity }, deleteMany: {} },
-        permissionGroup: { connect: { permissionGroupId } },
-      },
-    });
+    const data: Prisma.PlatformUserModelUpdateInput = {
+      name,
+      email,
+      phone,
+    };
 
+    if (permissionGroupId) {
+      await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
+      data.permissionGroup = { connect: { permissionGroupId } };
+    }
+
+    if (password) {
+      const identity = hashSync(password, 10);
+      data.methods = {
+        create: { provider: 'LOCAL', identity },
+        deleteMany: {},
+      };
+    }
+
+    const { platformUserId } = user;
+    const where = { platformUserId };
+    await prisma.platformUserModel.update({ where, data });
     return user;
   }
 
@@ -203,6 +207,52 @@ export default class User {
     return user;
   }
 
+  /** 이메일로 사용자를 가져옵니다. 없을 경우 오류를 발생합니다. */
+  public static async getUserByEmailOrThrow(
+    email: string
+  ): Promise<PlatformUserModel> {
+    const user = await User.getUserByEmail(email);
+    if (!user) {
+      throw new InternalError(
+        '해당 사용자를 찾을 수 없습니다.',
+        OPCODE.NOT_FOUND
+      );
+    }
+
+    return user;
+  }
+
+  /** 전화번호로 사용자를 가져옵니다. */
+  public static async getUserByPhone(
+    phone: string
+  ): Promise<PlatformUserModel | null> {
+    const user = await prisma.platformUserModel.findFirst({ where: { phone } });
+    return user;
+  }
+
+  /** 전화번호로 사용자를 가져옵니다. 없을 경우 오류를 발생합니다. */
+  public static async getUserByPhoneOrThrow(
+    phone: string
+  ): Promise<PlatformUserModel> {
+    const user = await User.getUserByPhone(phone);
+    if (!user) {
+      throw new InternalError(
+        '해당 사용자를 찾을 수 없습니다.',
+        OPCODE.NOT_FOUND
+      );
+    }
+
+    return user;
+  }
+
+  /** 이메일로 사용자를 가져옵니다. */
+  public static async getUserByEmail(
+    email: string
+  ): Promise<PlatformUserModel | null> {
+    const user = await prisma.platformUserModel.findFirst({ where: { email } });
+    return user;
+  }
+
   /** 사용자를 불러옵니다. */
   public static async getUser(
     platform: PlatformModel,
@@ -231,30 +281,6 @@ export default class User {
   ): Promise<boolean> {
     const exists = await prisma.platformUserModel.count({ where: { phone } });
     return exists > 0;
-  }
-
-  /** 세션 ID 로 사용자를 불러옵니다. */
-  public static async getUserSession(
-    platformUserSessionId: string
-  ): Promise<
-    PlatformUserSessionModel & {
-      platformUser: PlatformUserModel & { platform: PlatformModel };
-    }
-  > {
-    const { findFirst } = prisma.platformUserSessionModel;
-    const session = await findFirst({
-      where: { platformUserSessionId },
-      include: { platformUser: { include: { platform: true } } },
-    });
-
-    if (!session) {
-      throw new InternalError(
-        '로그아웃되었습니다. 다시 로그인해주세요.',
-        OPCODE.REQUIRED_LOGIN
-      );
-    }
-
-    return session;
   }
 
   /** 사용자를 삭제합니다. */

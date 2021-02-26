@@ -7,22 +7,23 @@ datasource dbModel {
 }
 
 generator clientModel {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 // 플랫폼
 model PlatformModel {
   platformId String @id @default(uuid())
-  
-  name String
-  users PlatformUserModel[]
-  accessKeys PlatformAccessKeyModel[]
-  logs PlatformLogModel[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  name       String
+  users      PlatformUserModel[]
+  accessKeys PlatformAccessKeyModel[]
+  logs       PlatformLogModel[]
+
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  deletedAt            DateTime?
+  PermissionGroupModel PermissionGroupModel[]
 }
 
 // 플랫폼 사용자
@@ -30,22 +31,23 @@ model PlatformUserModel {
   platformUserId String @id @default(uuid())
 
   platformId String
-  platform PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId])
 
-  name String
+  name  String
   email String
   phone String
 
   methods PlatformUserMethodModel[]
 
   permissionGroupId String
-  permissionGroup PermissionGroupModel @relation(fields: [permissionGroupId])
+  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  deletedAt                DateTime?
+  PlatformUserSessionModel PlatformUserSessionModel[]
+  PlatformLogModel         PlatformLogModel[]
 }
-
 
 // 플랫폼 로그인 연동 제공자
 enum PlatformUserMethodProvider {
@@ -57,27 +59,26 @@ model PlatformUserMethodModel {
   platformUserMethodId String @id @default(uuid())
 
   platformUserId String
-  platformUser PlatformUserModel @relation(fields: [platformUserId])
+  platformUser   PlatformUserModel @relation(fields: [platformUserId])
 
   provider PlatformUserMethodProvider
   identity String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
-
 
 // 플랫폼 사용자 세션
 model PlatformUserSessionModel {
   platformUserSessionId String @id
 
   platformUserId String
-  platformUser PlatformUserModel @relation(fields: [platformUserId])
-  userAgent String
+  platformUser   PlatformUserModel @relation(fields: [platformUserId])
+  userAgent      String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
@@ -101,18 +102,18 @@ model PlatformLogModel {
   platformLogType PlatformLogType
 
   platformId String
-  platform PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId])
 
   platformUserId String?
-  platformUser PlatformUserModel? @relation(fields: [platformUserId])
+  platformUser   PlatformUserModel? @relation(fields: [platformUserId])
 
   platformAccessKeyId String?
-  platformAccessKey PlatformAccessKeyModel? @relation(fields: [platformAccessKeyId])
+  platformAccessKey   PlatformAccessKeyModel? @relation(fields: [platformAccessKeyId])
 
   message String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
 
@@ -120,28 +121,28 @@ model PlatformLogModel {
 model PlatformAccessKeyModel {
   isEnabled Boolean @default(true)
 
-  name String
-  platformAccessKeyId String @id @default(uuid())
+  name                    String
+  platformAccessKeyId     String @id @default(uuid())
   platformSecretAccessKey String @default(uuid())
 
   platformId String
-  platform PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId])
 
   permissionGroupId String
-  permissionGroup PermissionGroupModel @relation(fields: [permissionGroupId])
+  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId])
 
-  usedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  usedAt           DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  PlatformLogModel PlatformLogModel[]
 }
-
 
 // 플랫폼 사용자/어세스 키 권한
 model PermissionModel {
   permissionId String @id
 
-  name String
+  name        String
   description String @default("")
 
   permissionGroup PermissionGroupModel[]
@@ -154,18 +155,17 @@ model PermissionModel {
 model PermissionGroupModel {
   permissionGroupId String @id @default(uuid())
 
-  name String
+  name        String
   description String @default("")
 
-  platformId String?
-  platform PlatformModel? @relation(fields: [platformId])
+  platformId  String?
+  platform    PlatformModel?    @relation(fields: [platformId])
   permissions PermissionModel[]
 
-  users PlatformUserModel[]
+  users      PlatformUserModel[]
   accessKeys PlatformAccessKeyModel[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 }
-
