@@ -33,7 +33,7 @@ export default function getAccessKeysRouter(): Router {
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_CREATE,
-        `${platformAccessKeyId} 액세스 토큰을 생성하였습니다.`
+        `${platformAccessKeyId} 액세스 키를 생성하였습니다.`
       );
 
       res.json({
@@ -63,7 +63,7 @@ export default function getAccessKeysRouter(): Router {
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_MODIFY,
-        `${platformAccessKeyId} 액세스 토큰을 수정하였습니다.`
+        `${platformAccessKeyId} 액세스 키를 수정하였습니다.`
       );
 
       res.json({ opcode: OPCODE.SUCCESS });
@@ -80,7 +80,7 @@ export default function getAccessKeysRouter(): Router {
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_DELETE,
-        `${platformAccessKeyId} 액세스 토큰을 삭제하였습니다.`
+        `${platformAccessKeyId} 액세스 키를 삭제하였습니다.`
       );
 
       res.json({ opcode: OPCODE.SUCCESS });
