@@ -14,6 +14,9 @@ declare global {
         prs: string[];
         iat: Date;
         exp: Date;
+        platform: PlatformModel;
+        platformUser: PlatformUserModel;
+        platformAccessKey: PlatformAccessKeyModel;
       };
     }
   }

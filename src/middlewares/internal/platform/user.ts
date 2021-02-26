@@ -6,7 +6,7 @@ import { User } from '../../../controllers';
 export default function InternalPlatformUserMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
-      platform,
+      internal: { platform },
       params: { platformUserId },
     } = req;
 
@@ -18,7 +18,7 @@ export default function InternalPlatformUserMiddleware(): Callback {
     }
 
     const platformUser = await User.getUserOrThrow(platform, platformUserId);
-    req.platformUser = platformUser;
+    req.internal.platformUser = platformUser;
 
     next();
   });

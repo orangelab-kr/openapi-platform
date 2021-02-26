@@ -15,8 +15,12 @@ export default function getInternalPlatformsUsersRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.USERS),
     Wrapper(async (req, res) => {
-      const { platform, query } = req;
-      const { platformUsers, total } = await User.getUsers(platform, query);
+      const { internal, query } = req;
+      const { platformUsers, total } = await User.getUsers(
+        internal.platform,
+        query
+      );
+
       res.json({ opcode: OPCODE.SUCCESS, platformUsers, total });
     })
   );
@@ -25,8 +29,8 @@ export default function getInternalPlatformsUsersRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.USERS_CREATE),
     Wrapper(async (req, res) => {
-      const { platform, body } = req;
-      const { platformUserId } = await User.createUser(platform, body);
+      const { internal, body } = req;
+      const { platformUserId } = await User.createUser(internal.platform, body);
       res.json({ opcode: OPCODE.SUCCESS, platformUserId });
     })
   );
@@ -36,7 +40,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.USERS_VIEW),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
-      const { platformUser } = req;
+      const { platformUser } = req.internal;
       res.json({ opcode: OPCODE.SUCCESS, platformUser });
     })
   );
@@ -46,8 +50,8 @@ export default function getInternalPlatformsUsersRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.USERS_MODIFY),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
-      const { body, platformUser } = req;
-      await User.modifyUser(platformUser, body);
+      const { body, internal } = req;
+      await User.modifyUser(internal.platformUser, body);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -57,7 +61,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.USERS_DELETE),
     InternalPlatformUserMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform, platformUser } = req;
+      const { platform, platformUser } = req.internal;
       await User.deleteUser(platform, platformUser);
       res.json({ opcode: OPCODE.SUCCESS });
     })

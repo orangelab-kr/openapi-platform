@@ -1,7 +1,9 @@
+import { Log, User } from '../controllers';
+
 import { OPCODE } from '../tools';
+import { PlatformLogType } from '@prisma/client';
 import { PlatformUserMiddleware } from '../middlewares';
 import { Router } from 'express';
-import { User } from '../controllers';
 import Wrapper from '../tools/wrapper';
 
 export default function getUserRouter(): Router {
@@ -30,6 +32,12 @@ export default function getUserRouter(): Router {
     Wrapper(async (req, res) => {
       const { platform, body } = req;
       const { platformUserId } = await User.createUser(platform, body);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.USER_CREATE,
+        `${platformUserId} 사용자를 추가하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS, platformUserId });
     })
   );
@@ -39,7 +47,14 @@ export default function getUserRouter(): Router {
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platformUser, body } = req;
+      const { platformUserId } = platformUser;
       await User.modifyUser(platformUser, body);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.USER_MODIFY,
+        `${platformUserId} 사용자를 수정하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -49,7 +64,14 @@ export default function getUserRouter(): Router {
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platform, platformUser } = req;
+      const { platformUserId } = platformUser;
       await User.deleteUser(platform, platformUser);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.USER_DELETE,
+        `${platformUserId} 사용자를 추가하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );

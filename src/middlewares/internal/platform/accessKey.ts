@@ -6,7 +6,7 @@ import { Callback } from '../../../tools/wrapper';
 export default function InternalPlatformAccessKeyMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
-      platform,
+      internal: { platform },
       params: { platformAccessKeyId },
     } = req;
 
@@ -22,8 +22,7 @@ export default function InternalPlatformAccessKeyMiddleware(): Callback {
       platformAccessKeyId
     );
 
-    req.platformAccessKey = platformAccessKey;
-
+    req.internal.platformAccessKey = platformAccessKey;
     next();
   });
 }

@@ -93,11 +93,15 @@ enum PlatformLogType {
   ACCESS_KEY_CREATE
   ACCESS_KEY_MODIFY
   ACCESS_KEY_DELETE
+
+  PERMISSION_GROUP_CREATE
+  PERMISSION_GROUP_MODIFY
+  PERMISSION_GROUP_DELETE
 }
 
 // 플랫폼 사용자 기록
 model PlatformLogModel {
-  platformUserLogId String @id @default(uuid())
+  platformLogId String @id @default(uuid())
 
   platformLogType PlatformLogType
 

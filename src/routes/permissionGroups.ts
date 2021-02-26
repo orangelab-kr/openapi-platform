@@ -1,5 +1,7 @@
+import { Log } from '../controllers';
 import OPCODE from '../tools/opcode';
 import PermissionGroup from '../controllers/permissionGroup';
+import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
 import Wrapper from '../tools/wrapper';
 
@@ -43,6 +45,12 @@ export default function getPermissionGroupsRouter(): Router {
         platform
       );
 
+      Log.createRequestLog(
+        req,
+        PlatformLogType.PERMISSION_GROUP_CREATE,
+        `${permissionGroupId} 권한 그룹을 생성하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS, permissionGroupId });
     })
   );
@@ -61,6 +69,12 @@ export default function getPermissionGroupsRouter(): Router {
         platform
       );
 
+      Log.createRequestLog(
+        req,
+        PlatformLogType.PERMISSION_GROUP_MODIFY,
+        `${permissionGroupId} 권한 그룹을 수정하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -73,6 +87,12 @@ export default function getPermissionGroupsRouter(): Router {
         params: { permissionGroupId },
       } = req;
       await PermissionGroup.deletePermissionGroup(permissionGroupId, platform);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.PERMISSION_GROUP_DELETE,
+        `${permissionGroupId} 권한 그룹을 삭제하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );

@@ -1,4 +1,9 @@
-import { PlatformModel, PlatformUserModel, Prisma } from '@prisma/client';
+import {
+  PlatformModel,
+  PlatformUserMethodProvider,
+  PlatformUserModel,
+  Prisma,
+} from '@prisma/client';
 
 import Database from '../tools/database';
 import InternalError from '../tools/error';
@@ -125,10 +130,11 @@ export default class User {
     }
 
     if (password) {
+      const provider = PlatformUserMethodProvider.LOCAL;
       const identity = hashSync(password, 10);
       data.methods = {
-        create: { provider: 'LOCAL', identity },
-        deleteMany: {},
+        deleteMany: { provider },
+        create: { provider, identity },
       };
     }
 

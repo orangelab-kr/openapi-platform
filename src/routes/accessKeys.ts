@@ -1,6 +1,8 @@
 import AccessKey from '../controllers/accessKey';
 import InternalPlatformAccessKeyMiddleware from '../middlewares/internal/platform/accessKey';
+import { Log } from '../controllers';
 import OPCODE from '../tools/opcode';
+import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
 import Wrapper from '../tools/wrapper';
 
@@ -28,6 +30,12 @@ export default function getAccessKeysRouter(): Router {
         platformAccessKeyId,
         platformSecretAccessKey,
       } = await AccessKey.createAccessKey(platform, body);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.ACCESS_KEY_CREATE,
+        `${platformAccessKeyId} 액세스 토큰을 생성하였습니다.`
+      );
+
       res.json({
         opcode: OPCODE.SUCCESS,
         platformAccessKeyId,
@@ -50,7 +58,14 @@ export default function getAccessKeysRouter(): Router {
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { body, platformAccessKey } = req;
+      const { platformAccessKeyId } = platformAccessKey;
       await AccessKey.modifyAccessKey(platformAccessKey, body);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.ACCESS_KEY_MODIFY,
+        `${platformAccessKeyId} 액세스 토큰을 수정하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -60,7 +75,14 @@ export default function getAccessKeysRouter(): Router {
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { platform, platformAccessKey } = req;
+      const { platformAccessKeyId } = platformAccessKey;
       await AccessKey.deleteAccessKey(platform, platformAccessKey);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.ACCESS_KEY_DELETE,
+        `${platformAccessKeyId} 액세스 토큰을 삭제하였습니다.`
+      );
+
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
