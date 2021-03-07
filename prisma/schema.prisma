@@ -31,7 +31,7 @@ model PlatformUserModel {
   platformUserId String @id @default(uuid())
 
   platformId String
-  platform   PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId], references: [platformId])
 
   name  String
   email String
@@ -40,7 +40,7 @@ model PlatformUserModel {
   methods PlatformUserMethodModel[]
 
   permissionGroupId String
-  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId])
+  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId], references: [permissionGroupId])
 
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
@@ -59,7 +59,7 @@ model PlatformUserMethodModel {
   platformUserMethodId String @id @default(uuid())
 
   platformUserId String
-  platformUser   PlatformUserModel @relation(fields: [platformUserId])
+  platformUser   PlatformUserModel @relation(fields: [platformUserId], references: [platformUserId])
 
   provider PlatformUserMethodProvider
   identity String
@@ -74,7 +74,7 @@ model PlatformUserSessionModel {
   platformUserSessionId String @id
 
   platformUserId String
-  platformUser   PlatformUserModel @relation(fields: [platformUserId])
+  platformUser   PlatformUserModel @relation(fields: [platformUserId], references: [platformUserId])
   userAgent      String?
 
   createdAt DateTime  @default(now())
@@ -106,13 +106,13 @@ model PlatformLogModel {
   platformLogType PlatformLogType
 
   platformId String
-  platform   PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId], references: [platformId])
 
   platformUserId String?
-  platformUser   PlatformUserModel? @relation(fields: [platformUserId])
+  platformUser   PlatformUserModel? @relation(fields: [platformUserId], references: [platformUserId])
 
   platformAccessKeyId String?
-  platformAccessKey   PlatformAccessKeyModel? @relation(fields: [platformAccessKeyId])
+  platformAccessKey   PlatformAccessKeyModel? @relation(fields: [platformAccessKeyId], references: [platformAccessKeyId])
 
   message String
 
@@ -130,10 +130,10 @@ model PlatformAccessKeyModel {
   platformSecretAccessKey String @default(uuid())
 
   platformId String
-  platform   PlatformModel @relation(fields: [platformId])
+  platform   PlatformModel @relation(fields: [platformId], references: [platformId])
 
   permissionGroupId String
-  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId])
+  permissionGroup   PermissionGroupModel @relation(fields: [permissionGroupId], references: [permissionGroupId])
 
   usedAt           DateTime?
   createdAt        DateTime           @default(now())
@@ -163,7 +163,7 @@ model PermissionGroupModel {
   description String @default("")
 
   platformId  String?
-  platform    PlatformModel?    @relation(fields: [platformId])
+  platform    PlatformModel?    @relation(fields: [platformId], references: [platformId])
   permissions PermissionModel[]
 
   users      PlatformUserModel[]
