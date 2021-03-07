@@ -13,7 +13,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.get(
     '/',
-    InternalPermissionMiddleware(PERMISSION.USERS),
+    InternalPermissionMiddleware(PERMISSION.USERS_DETAIL),
     Wrapper(async (req, res) => {
       const { internal, query } = req;
       const { platformUsers, total } = await User.getUsers(

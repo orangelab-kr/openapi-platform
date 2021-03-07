@@ -34,7 +34,7 @@ export default function getInternalPlatformsRouter(): Router {
 
   router.get(
     '/',
-    InternalPermissionMiddleware(PERMISSION.PLATFORMS),
+    InternalPermissionMiddleware(PERMISSION.PLATFORMS_DETAIL),
     Wrapper(async (req, res) => {
       const { platforms, total } = await Platform.getPlatforms(req.query);
       res.json({ opcode: OPCODE.SUCCESS, platforms, total });
