@@ -1,11 +1,10 @@
+import { Router } from 'express';
+import User from '../../../controllers/user';
+import { InternalPlatformUserMiddleware } from '../../../middlewares/internal';
 import InternalPermissionMiddleware, {
   PERMISSION,
 } from '../../../middlewares/internal/permissions';
-
-import { InternalPlatformUserMiddleware } from '../../../middlewares/internal';
 import OPCODE from '../../../tools/opcode';
-import { Router } from 'express';
-import User from '../../../controllers/user';
 import Wrapper from '../../../tools/wrapper';
 
 export default function getInternalPlatformsUsersRouter(): Router {
@@ -13,7 +12,7 @@ export default function getInternalPlatformsUsersRouter(): Router {
 
   router.get(
     '/',
-    InternalPermissionMiddleware(PERMISSION.USERS_DETAIL),
+    InternalPermissionMiddleware(PERMISSION.USERS_LIST),
     Wrapper(async (req, res) => {
       const { internal, query } = req;
       const { platformUsers, total } = await User.getUsers(

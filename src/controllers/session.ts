@@ -1,5 +1,6 @@
 import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
 import {
+  PlatformLogType,
   PlatformModel,
   PlatformUserMethodModel,
   PlatformUserMethodProvider,
@@ -7,6 +8,7 @@ import {
   PlatformUserSessionModel,
 } from '@prisma/client';
 
+import Log from './log';
 import { User } from '.';
 import { compareSync } from 'bcryptjs';
 import { randomBytes } from 'crypto';
@@ -86,12 +88,17 @@ export default class Session {
     platformUser: PlatformUserModel,
     userAgent?: string
   ): Promise<string> {
-    await Session.revokeAllSession(platformUser);
     const platformUserSessionId = await Session.generateSessionId();
     const { platformUserId } = platformUser;
     await prisma.platformUserSessionModel.create({
       data: { platformUserSessionId, platformUserId, userAgent },
     });
+
+    Log.createUserLog(
+      platformUser,
+      PlatformLogType.LOGIN,
+      `${userAgent}에서 로그인을 진행하였습니다.`
+    );
 
     return platformUserSessionId;
   }

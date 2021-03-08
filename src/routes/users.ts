@@ -69,7 +69,7 @@ export default function getUserRouter(): Router {
       Log.createRequestLog(
         req,
         PlatformLogType.USER_DELETE,
-        `${platformUserId} 사용자를 추가하였습니다.`
+        `${platformUserId} 사용자를 삭제하였습니다.`
       );
 
       res.json({ opcode: OPCODE.SUCCESS });

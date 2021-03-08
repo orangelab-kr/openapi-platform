@@ -11,7 +11,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
 
   router.get(
     '/',
-    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_DETAIL),
+    InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_LIST),
     Wrapper(async (req, res) => {
       const { platform, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(

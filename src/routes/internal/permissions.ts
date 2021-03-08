@@ -1,4 +1,6 @@
+import InternalPermissionMiddleware from '../../middlewares/internal/permissions';
 import OPCODE from '../../tools/opcode';
+import { PERMISSION } from '../../middlewares/internal';
 import Permission from '../../controllers/permission';
 import { Router } from 'express';
 import Wrapper from '../../tools/wrapper';
@@ -8,6 +10,7 @@ export default function getInternalPermissionsRouter(): Router {
 
   router.get(
     '/',
+    InternalPermissionMiddleware(PERMISSION.PERMISSIONS_LIST),
     Wrapper(async (req, res) => {
       const { total, permissions } = await Permission.getPermissions(req.query);
       res.json({ opcode: OPCODE.SUCCESS, permissions, total });
@@ -16,6 +19,7 @@ export default function getInternalPermissionsRouter(): Router {
 
   router.get(
     '/:permissionId',
+    InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_VIEW),
     Wrapper(async (req, res) => {
       const { permissionId } = req.params;
       const permission = await Permission.getPermissionOrThrow(permissionId);
@@ -25,6 +29,7 @@ export default function getInternalPermissionsRouter(): Router {
 
   router.post(
     '/',
+    InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_CREATE),
     Wrapper(async (req, res) => {
       const { permissionId } = await Permission.createPermission(req.body);
       res.json({ opcode: OPCODE.SUCCESS, permissionId });
@@ -33,6 +38,7 @@ export default function getInternalPermissionsRouter(): Router {
 
   router.post(
     '/:permissionId',
+    InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_MODIFY),
     Wrapper(async (req, res) => {
       const { body, params } = req;
       await Permission.modifyPermission(params.permissionId, body);
@@ -42,6 +48,7 @@ export default function getInternalPermissionsRouter(): Router {
 
   router.delete(
     '/:permissionId',
+    InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_DELETE),
     Wrapper(async (req, res) => {
       const { permissionId } = req.params;
       await Permission.deletePermission(permissionId);
