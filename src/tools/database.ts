@@ -5,7 +5,8 @@ export default class Database {
 
   public static initPrisma(): void {
     Database.prisma.$use(async (params, next) => {
-      if (!['PermissionModel'].includes(params.model || '')) {
+      const bypassSoftDeleted: string[] = ['PermissionModel'];
+      if (params.model && !bypassSoftDeleted.includes(params.model)) {
         if (!['create', 'update', 'upsert'].includes(params.action)) {
           if (!params.args.where) {
             params.args.where = {};
@@ -16,12 +17,12 @@ export default class Database {
           }
         }
 
-        if (['delete', 'deleteMany'].includes(params.action)) {
+        if (['delete', 'delete'].includes(params.action)) {
           switch (params.action) {
             case 'delete':
               params.action = 'update';
               break;
-            case 'deleteMany':
+            case 'delete':
               params.action = 'updateMany';
               break;
           }
