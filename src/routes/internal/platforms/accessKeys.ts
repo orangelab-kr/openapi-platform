@@ -13,9 +13,9 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_LIST),
     Wrapper(async (req, res) => {
-      const { platform, query } = req;
+      const { internal, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
-        platform,
+        internal.platform,
         query
       );
 
@@ -27,11 +27,12 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
     '/',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_CREATE),
     Wrapper(async (req, res) => {
-      const { platform, body } = req;
+      const { internal, body } = req;
       const {
         platformAccessKeyId,
         platformSecretAccessKey,
-      } = await AccessKey.createAccessKey(platform, body);
+      } = await AccessKey.createAccessKey(internal.platform, body);
+
       res.json({
         opcode: OPCODE.SUCCESS,
         platformAccessKeyId,
@@ -45,7 +46,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_VIEW),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
-      const { platformAccessKey } = req;
+      const { platformAccessKey } = req.internal;
       res.json({ opcode: OPCODE.SUCCESS, platformAccessKey });
     })
   );
@@ -55,8 +56,8 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_MODIFY),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
-      const { body, platformAccessKey } = req;
-      await AccessKey.modifyAccessKey(platformAccessKey, body);
+      const { body, internal } = req;
+      await AccessKey.modifyAccessKey(internal.platformAccessKey, body);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -66,7 +67,7 @@ export default function getInternalPlatformsAccessKeysRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_DELETE),
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform, platformAccessKey } = req;
+      const { platform, platformAccessKey } = req.internal;
       await AccessKey.deleteAccessKey(platform, platformAccessKey);
       res.json({ opcode: OPCODE.SUCCESS });
     })

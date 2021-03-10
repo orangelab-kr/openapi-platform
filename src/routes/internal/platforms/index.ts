@@ -55,7 +55,7 @@ export default function getInternalPlatformsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_VIEW),
     InternalPlatformMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform } = req;
+      const { platform } = req.internal;
       res.json({ opcode: OPCODE.SUCCESS, platform });
     })
   );
@@ -65,8 +65,8 @@ export default function getInternalPlatformsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_MODIFY),
     InternalPlatformMiddleware(),
     Wrapper(async (req, res) => {
-      const { body, platform } = req;
-      await Platform.modifyPlatform(platform, body);
+      const { body, internal } = req;
+      await Platform.modifyPlatform(internal.platform, body);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
@@ -76,7 +76,7 @@ export default function getInternalPlatformsRouter(): Router {
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_DELETE),
     InternalPlatformMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform } = req;
+      const { platform } = req.internal;
       await Platform.deletePlatform(platform);
       res.json({ opcode: OPCODE.SUCCESS });
     })

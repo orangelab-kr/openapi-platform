@@ -16,7 +16,7 @@ export default function InternalPlatformMiddleware(): Callback {
     }
 
     const platform = await Platform.getPlatformOrThrow(platformId);
-    req.platform = platform;
+    req.internal.platform = platform;
 
     next();
   });
