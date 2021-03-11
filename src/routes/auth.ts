@@ -12,7 +12,7 @@ export default function getAuthRouter(): Router {
     '/',
     PlatformMiddleware(),
     Wrapper(async (req, res) => {
-      const { platformUser, platformAccessKey } = req.internal;
+      const { platformUser, platformAccessKey } = req;
       res.json({
         opcode: OPCODE.SUCCESS,
         platformUser,
@@ -25,9 +25,9 @@ export default function getAuthRouter(): Router {
     '/',
     PlatformMiddleware(['user']),
     Wrapper(async (req, res) => {
-      const { body, internal } = req;
+      const { body, platformUser } = req;
       delete body.permissionGroupId;
-      await User.modifyUser(internal.platformUser, body);
+      await User.modifyUser(platformUser, body);
       res.json({ opcode: OPCODE.SUCCESS });
     })
   );
