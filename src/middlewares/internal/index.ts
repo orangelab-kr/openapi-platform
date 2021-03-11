@@ -1,13 +1,12 @@
 export * from './permissions';
 export * from './platform';
 
-import { Joi, OPCODE } from '../../tools';
-import Wrapper, { Callback } from '../../tools/wrapper';
-
-import InternalError from '../../tools/error';
 import jwt from 'jsonwebtoken';
-import logger from '../../tools/logger';
 import moment from 'moment';
+import { Joi, OPCODE } from '../../tools';
+import InternalError from '../../tools/error';
+import logger from '../../tools/logger';
+import Wrapper, { Callback } from '../../tools/wrapper';
 
 export default function InternalMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
@@ -35,7 +34,7 @@ export default function InternalMiddleware(): Callback {
       const data = jwt.verify(token, key);
       const schema = Joi.object({
         sub: Joi.string().valid('openapi-platform').required(),
-        iss: Joi.string().hostname().required(),
+        iss: Joi.string().required(),
         aud: Joi.string().email().required(),
         prs: Joi.string().required(),
         iat: Joi.date().timestamp().required(),
