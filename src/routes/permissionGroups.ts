@@ -11,11 +11,11 @@ export default function getPermissionGroupsRouter(): Router {
   router.get(
     '/',
     Wrapper(async (req, res) => {
-      const { query, platform } = req;
+      const { query, loggined } = req;
       const {
         total,
         permissionGroups,
-      } = await PermissionGroup.getPermissionGroups(query, platform);
+      } = await PermissionGroup.getPermissionGroups(query, loggined.platform);
       res.json({ opcode: OPCODE.SUCCESS, permissionGroups, total });
     })
   );
@@ -24,7 +24,7 @@ export default function getPermissionGroupsRouter(): Router {
     '/:permissionGroupId',
     Wrapper(async (req, res) => {
       const {
-        platform,
+        loggined: { platform },
         params: { permissionGroupId },
       } = req;
       const permissionGroup = await PermissionGroup.getPermissionGroupOrThrow(
@@ -39,10 +39,10 @@ export default function getPermissionGroupsRouter(): Router {
   router.post(
     '/',
     Wrapper(async (req, res) => {
-      const { platform, body } = req;
+      const { loggined, body } = req;
       const { permissionGroupId } = await PermissionGroup.createPermissionGroup(
         body,
-        platform
+        loggined.platform
       );
 
       Log.createRequestLog(
@@ -60,7 +60,7 @@ export default function getPermissionGroupsRouter(): Router {
     Wrapper(async (req, res) => {
       const {
         body,
-        platform,
+        loggined: { platform },
         params: { permissionGroupId },
       } = req;
       await PermissionGroup.modifyPermissionGroup(
@@ -83,7 +83,7 @@ export default function getPermissionGroupsRouter(): Router {
     '/:permissionGroupId',
     Wrapper(async (req, res) => {
       const {
-        platform,
+        loggined: { platform },
         params: { permissionGroupId },
       } = req;
       await PermissionGroup.deletePermissionGroup(permissionGroupId, platform);

@@ -7,6 +7,11 @@ declare global {
       platform: PlatformModel;
       platformUser: PlatformUserModel;
       platformAccessKey: PlatformAccessKeyModel;
+      loggined: {
+        platform: PlatformModel;
+        platformUser: PlatformUserModel;
+        platformAccessKey: PlatformAccessKeyModel;
+      };
       internal: {
         sub: string;
         iss: string;

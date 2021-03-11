@@ -12,8 +12,12 @@ export default function getUserRouter(): Router {
   router.get(
     '/',
     Wrapper(async (req, res) => {
-      const { platform, query } = req;
-      const { total, platformUsers } = await User.getUsers(platform, query);
+      const { loggined, query } = req;
+      const { total, platformUsers } = await User.getUsers(
+        loggined.platform,
+        query
+      );
+
       res.json({ opcode: OPCODE.SUCCESS, platformUsers, total });
     })
   );
@@ -30,8 +34,8 @@ export default function getUserRouter(): Router {
   router.post(
     '/',
     Wrapper(async (req, res) => {
-      const { platform, body } = req;
-      const { platformUserId } = await User.createUser(platform, body);
+      const { loggined, body } = req;
+      const { platformUserId } = await User.createUser(loggined.platform, body);
       Log.createRequestLog(
         req,
         PlatformLogType.USER_CREATE,
@@ -63,9 +67,9 @@ export default function getUserRouter(): Router {
     '/:platformUserId',
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform, platformUser } = req;
+      const { loggined, platformUser } = req;
       const { platformUserId } = platformUser;
-      await User.deleteUser(platform, platformUser);
+      await User.deleteUser(loggined.platform, platformUser);
       Log.createRequestLog(
         req,
         PlatformLogType.USER_DELETE,

@@ -12,9 +12,9 @@ export default function getAccessKeysRouter(): Router {
   router.get(
     '/',
     Wrapper(async (req, res) => {
-      const { platform, query } = req;
+      const { loggined, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
-        platform,
+        loggined.platform,
         query
       );
 
@@ -25,11 +25,11 @@ export default function getAccessKeysRouter(): Router {
   router.post(
     '/',
     Wrapper(async (req, res) => {
-      const { platform, body } = req;
+      const { loggined, body } = req;
       const {
         platformAccessKeyId,
         platformSecretAccessKey,
-      } = await AccessKey.createAccessKey(platform, body);
+      } = await AccessKey.createAccessKey(loggined.platform, body);
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_CREATE,
@@ -74,9 +74,9 @@ export default function getAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     InternalPlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
-      const { platform, platformAccessKey } = req;
+      const { loggined, platformAccessKey } = req;
       const { platformAccessKeyId } = platformAccessKey;
-      await AccessKey.deleteAccessKey(platform, platformAccessKey);
+      await AccessKey.deleteAccessKey(loggined.platform, platformAccessKey);
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_DELETE,

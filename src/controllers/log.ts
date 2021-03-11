@@ -22,7 +22,7 @@ export default class Log {
       platform: { platformId },
       platformUser: { platformUserId },
       platformAccessKey: { platformAccessKeyId },
-    } = req;
+    } = req.loggined;
 
     if (!platformId || !(platformUserId || platformAccessKeyId)) {
       throw new InternalError(

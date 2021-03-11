@@ -6,7 +6,7 @@ import { User } from '../controllers';
 export default function PlatformUserMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
-      platform,
+      loggined: { platform },
       params: { platformUserId },
     } = req;
 
