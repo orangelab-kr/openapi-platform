@@ -1,4 +1,8 @@
-import { PlatformModel, PlatformUserModel } from '@prisma/client';
+import {
+  PlatformAccessKeyModel,
+  PlatformModel,
+  PlatformUserModel,
+} from '@prisma/client';
 import 'express';
 
 declare global {

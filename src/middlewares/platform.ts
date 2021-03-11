@@ -1,8 +1,7 @@
-import { InternalError, OPCODE } from '../tools';
-import Wrapper, { Callback } from '../tools/wrapper';
-
 import { AccessKey } from '../controllers';
 import Session from '../controllers/session';
+import { InternalError, OPCODE } from '../tools';
+import Wrapper, { Callback } from '../tools/wrapper';
 
 export default function PlatformMiddleware(
   only: ('user' | 'accessKey')[] = ['user', 'accessKey']
@@ -13,6 +12,8 @@ export default function PlatformMiddleware(
     if (only.includes('user') && headers.authorization) {
       const platformUserSessionId = headers.authorization.substr(7);
       const session = await Session.getUserSession(platformUserSessionId);
+
+      req.loggined = <any>{};
       req.loggined.platform = session.platformUser.platform;
       req.loggined.platformUser = session.platformUser;
     } else if (only.includes('accessKey') && platformAccessKeyId) {
@@ -22,6 +23,7 @@ export default function PlatformMiddleware(
         platformSecretAccessKey,
       });
 
+      req.loggined = <any>{};
       req.loggined.platform = accessKey.platform;
       req.loggined.platformAccessKey = accessKey;
     }
