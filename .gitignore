@@ -105,3 +105,8 @@ dist
 
 # Webpack
 .webpack
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
