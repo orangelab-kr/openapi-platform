@@ -15,6 +15,8 @@ import os from 'os';
 
 export default function getRouter(): Application {
   const router = express();
+  InternalError.registerSentry(router);
+
   const hostname = os.hostname();
   const logging = morgan('common', {
     stream: { write: (str: string) => logger.info(`${str.trim()}`) },
