@@ -1,6 +1,6 @@
 import { Log } from '../controllers';
 import OPCODE from '../tools/opcode';
-import { PlatformLogType } from '.prisma/client';
+import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
 import Webhook from '../controllers/webhook';
 import Wrapper from '../tools/wrapper';
