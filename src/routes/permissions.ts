@@ -3,7 +3,7 @@ import { OPCODE, Wrapper } from '../tools';
 import { Permission } from '../controllers';
 import { Router } from 'express';
 
-export default function getPermissionRouter(): Router {
+export default function getPermissionsRouter(): Router {
   const router = Router();
 
   router.get(
