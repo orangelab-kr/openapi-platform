@@ -185,6 +185,7 @@ export default class AccessKey {
     const { isEnabled, name, permissionGroupId } = await schema.validateAsync(
       props
     );
+
     const { platformAccessKeyId } = platformAccessKey;
     const where: Prisma.PlatformAccessKeyModelWhereUniqueInput = {
       platformAccessKeyId,
