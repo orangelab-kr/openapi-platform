@@ -1,4 +1,6 @@
+import { Log } from '../controllers';
 import OPCODE from '../tools/opcode';
+import { PlatformLogType } from '.prisma/client';
 import { Router } from 'express';
 import Webhook from '../controllers/webhook';
 import Wrapper from '../tools/wrapper';
@@ -20,6 +22,11 @@ export default function getWebhooksRouter(): Router {
     Wrapper(async (req, res) => {
       const { loggined, body } = req;
       const webhooks = await Webhook.setWebhooks(loggined.platform, req.body);
+      Log.createRequestLog(
+        req,
+        PlatformLogType.WEBHOOK_MODIFY,
+        `${Object.keys(body).join(', ')} 웹훅을 수정하였습니다.`
+      );
 
       res.json({ opcode: OPCODE.SUCCESS, webhooks });
     })

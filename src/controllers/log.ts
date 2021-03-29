@@ -18,13 +18,9 @@ export default class Log {
     platformLogType: PlatformLogType,
     message: string
   ): Promise<void> {
-    const {
-      platform: { platformId },
-      platformUser: { platformUserId },
-      platformAccessKey: { platformAccessKeyId },
-    } = req.loggined;
+    const { platform, platformUser, platformAccessKey } = req.loggined;
 
-    if (!platformId || !(platformUserId || platformAccessKeyId)) {
+    if (!platform || !(platformUser || platformAccessKey)) {
       throw new InternalError(
         '알 수 없는 오류가 발생하였습니다.',
         OPCODE.ERROR
@@ -33,9 +29,10 @@ export default class Log {
 
     await prisma.platformLogModel.create({
       data: {
-        platformId,
-        platformUserId,
-        platformAccessKeyId,
+        platformId: platform && platform.platformId,
+        platformUserId: platformUser && platformUser.platformUserId,
+        platformAccessKeyId:
+          platformAccessKey && platformAccessKey.platformAccessKeyId,
         platformLogType,
         message,
       },

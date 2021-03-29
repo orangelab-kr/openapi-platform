@@ -1,7 +1,7 @@
 import AccessKey from '../controllers/accessKey';
-import InternalPlatformAccessKeyMiddleware from '../middlewares/internal/platform/accessKey';
 import { Log } from '../controllers';
 import OPCODE from '../tools/opcode';
+import { PlatformAccessKeyMiddleware } from '../middlewares';
 import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
 import Wrapper from '../tools/wrapper';
@@ -46,7 +46,7 @@ export default function getAccessKeysRouter(): Router {
 
   router.get(
     '/:platformAccessKeyId',
-    InternalPlatformAccessKeyMiddleware(),
+    PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { platformAccessKey } = req;
       res.json({ opcode: OPCODE.SUCCESS, platformAccessKey });
@@ -55,7 +55,7 @@ export default function getAccessKeysRouter(): Router {
 
   router.post(
     '/:platformAccessKeyId',
-    InternalPlatformAccessKeyMiddleware(),
+    PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { body, platformAccessKey } = req;
       const { platformAccessKeyId } = platformAccessKey;
@@ -72,7 +72,7 @@ export default function getAccessKeysRouter(): Router {
 
   router.delete(
     '/:platformAccessKeyId',
-    InternalPlatformAccessKeyMiddleware(),
+    PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { loggined, platformAccessKey } = req;
       const { platformAccessKeyId } = platformAccessKey;
