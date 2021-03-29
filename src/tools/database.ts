@@ -5,7 +5,7 @@ export default class Database {
 
   public static initPrisma(): void {
     Database.prisma.$use(async (params, next) => {
-      const bypassSoftDeleted: string[] = ['PermissionModel'];
+      const bypassSoftDeleted: string[] = ['PermissionModel', 'WebhookModel'];
       if (params.model && !bypassSoftDeleted.includes(params.model)) {
         if (!['create', 'update', 'upsert'].includes(params.action)) {
           if (!params.args.where) {

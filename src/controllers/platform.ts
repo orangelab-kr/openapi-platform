@@ -1,5 +1,5 @@
-import { PlatformModel, Prisma } from '@prisma/client';
 import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { PlatformModel, Prisma } from '@prisma/client';
 
 const { prisma } = Database;
 
@@ -19,7 +19,7 @@ export default class Platform {
     }
 
     const platform = await prisma.platformModel.create({
-      data: { name },
+      data: { name, webhooks: { create: {} } },
     });
 
     return platform;

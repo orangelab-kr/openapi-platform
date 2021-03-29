@@ -37,6 +37,9 @@ export enum PERMISSION {
 
   LOGS_LIST,
   LOGS_VIEW,
+
+  WEBHOOK_VIEW,
+  WEBHOOK_MODIFY,
 }
 
 export default function InternalPermissionMiddleware(

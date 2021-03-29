@@ -24,6 +24,7 @@ const PATTERN = {
   },
   PLATFORM: {
     ID: Joi.string().uuid().required(),
+    WEBHOOK: Joi.string().uri().allow(null).optional(),
     NAME: Joi.string().min(2).max(16).required(),
     ACCESS_KEY: {
       NAME: Joi.string().min(2).max(16).required().default('이름 없음'),

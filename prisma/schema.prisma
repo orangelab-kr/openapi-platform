@@ -19,6 +19,7 @@ model PlatformModel {
   users      PlatformUserModel[]
   accessKeys PlatformAccessKeyModel[]
   logs       PlatformLogModel[]
+  webhooks    WebhookModel?
 
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
@@ -69,6 +70,16 @@ model PlatformUserMethodModel {
   deletedAt DateTime?
 }
 
+// 플랫폼 웹훅
+model WebhookModel {
+  platformId String        @id
+  platform   PlatformModel @relation(fields: [platformId], references: [platformId])
+
+  endRideURL    String?
+  paymentURL String?
+  refundURL String?
+}
+
 // 플랫폼 사용자 세션
 model PlatformUserSessionModel {
   platformUserSessionId String @id
@@ -97,6 +108,8 @@ enum PlatformLogType {
   PERMISSION_GROUP_CREATE
   PERMISSION_GROUP_MODIFY
   PERMISSION_GROUP_DELETE
+
+  WEBHOOK_MODIFY
 }
 
 // 플랫폼 사용자 기록
