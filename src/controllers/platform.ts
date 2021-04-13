@@ -18,9 +18,7 @@ export default class Platform {
       );
     }
 
-    const platform = await prisma.platformModel.create({
-      data: { name, webhooks: { create: {} } },
-    });
+    const platform = await prisma.platformModel.create({ data: { name } });
 
     return platform;
   }

@@ -10,16 +10,9 @@ import Wrapper from '../../../tools/wrapper';
 import getInternalPlatformsAccessKeysRouter from './accessKeys';
 import getInternalPlatformsLogsRouter from './logs';
 import getInternalPlatformsUsersRouter from './users';
-import getInternalWebhooksRouter from './webhooks';
 
 export default function getInternalPlatformsRouter(): Router {
   const router = Router();
-
-  router.use(
-    '/:platformId/webhooks',
-    InternalPlatformMiddleware(),
-    getInternalWebhooksRouter()
-  );
 
   router.use(
     '/:platformId/users',

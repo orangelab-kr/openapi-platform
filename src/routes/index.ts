@@ -9,7 +9,6 @@ import getLogsRouter from './logs';
 import getPermissionGroupsRouter from './permissionGroups';
 import getPermissionsRouter from './permissions';
 import getUserRouter from './users';
-import getWebhooksRouter from './webhooks';
 import logger from '../tools/logger';
 import morgan from 'morgan';
 import os from 'os';
@@ -32,7 +31,6 @@ export default function getRouter(): Application {
   router.use('/users', PlatformMiddleware(), getUserRouter());
   router.use('/accessKeys', PlatformMiddleware(), getAccessKeysRouter());
   router.use('/permissions', PlatformMiddleware(), getPermissionsRouter());
-  router.use('/webhooks', PlatformMiddleware(), getWebhooksRouter());
   router.use(
     '/permissionGroups',
     PlatformMiddleware(),
