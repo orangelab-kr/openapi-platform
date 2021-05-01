@@ -12,6 +12,7 @@ import getUserRouter from './users';
 import logger from '../tools/logger';
 import morgan from 'morgan';
 import os from 'os';
+import cors from 'cors';
 
 export default function getRouter(): Application {
   const router = express();
@@ -22,6 +23,7 @@ export default function getRouter(): Application {
     stream: { write: (str: string) => logger.info(`${str.trim()}`) },
   });
 
+  router.use(cors());
   router.use(logging);
   router.use(express.json());
   router.use(express.urlencoded({ extended: true }));
