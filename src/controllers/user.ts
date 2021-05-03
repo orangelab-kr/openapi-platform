@@ -175,6 +175,7 @@ export default class User {
     } = await schema.validateAsync(props);
     const { platformId } = platform;
     const orderBy = { [orderByField]: orderBySort };
+    const include = { permissionGroup: true };
     const where: Prisma.PlatformUserModelWhereInput = {
       platform: { platformId },
       OR: [
@@ -191,6 +192,7 @@ export default class User {
         skip,
         where,
         orderBy,
+        include,
       }),
     ]);
 
@@ -232,7 +234,11 @@ export default class User {
   public static async getUserByPhone(
     phone: string
   ): Promise<PlatformUserModel | null> {
-    const user = await prisma.platformUserModel.findFirst({ where: { phone } });
+    const user = await prisma.platformUserModel.findFirst({
+      where: { phone },
+      include: { permissionGroup: true },
+    });
+
     return user;
   }
 
@@ -255,7 +261,11 @@ export default class User {
   public static async getUserByEmail(
     email: string
   ): Promise<PlatformUserModel | null> {
-    const user = await prisma.platformUserModel.findFirst({ where: { email } });
+    const user = await prisma.platformUserModel.findFirst({
+      where: { email },
+      include: { permissionGroup: true },
+    });
+
     return user;
   }
 

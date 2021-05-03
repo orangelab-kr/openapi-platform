@@ -74,6 +74,7 @@ export default class PermissionGroup {
       orderBySort,
     } = await schema.validateAsync(props);
     const orderBy = { [orderByField]: orderBySort };
+    const include = { permissions: true };
     const where: any = {
       name: { contains: search },
       OR: [{ platformId: null }],
@@ -91,6 +92,7 @@ export default class PermissionGroup {
         skip,
         where,
         orderBy,
+        include,
       }),
     ]);
 

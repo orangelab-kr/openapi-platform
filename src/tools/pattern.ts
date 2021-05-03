@@ -26,7 +26,7 @@ const PATTERN = {
     ID: Joi.string().uuid().required(),
     NAME: Joi.string().min(2).max(16).required(),
     ACCESS_KEY: {
-      NAME: Joi.string().min(2).max(16).required().default('이름 없음'),
+      NAME: Joi.string().min(2).max(16).required(),
       ID: Joi.string().uuid().required(),
       SECRET: Joi.string().uuid().required(),
       IS_ENABLED: Joi.boolean().required(),
