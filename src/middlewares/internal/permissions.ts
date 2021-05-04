@@ -34,8 +34,8 @@ export enum PERMISSION {
   LOGS_LIST,
   LOGS_VIEW,
 
-  AUTHORIZE_SESSION,
-  AUTHORIZE_ACCESS_KEYS,
+  AUTHORIZE_USER,
+  AUTHORIZE_ACCESS_KEY,
 }
 
 export function InternalPermissionMiddleware(permission: PERMISSION): Callback {

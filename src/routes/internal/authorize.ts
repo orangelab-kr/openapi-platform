@@ -14,7 +14,7 @@ export function getInternalAuthorizeRouter(): Router {
 
   router.post(
     '/user',
-    InternalPermissionMiddleware(PERMISSION.AUTHORIZE_SESSION),
+    InternalPermissionMiddleware(PERMISSION.AUTHORIZE_USER),
     Wrapper(async (req, res) => {
       const platformUser = await Session.authorizeWithSessionId(req.body);
       res.json({ opcode: OPCODE.SUCCESS, platformUser });
@@ -23,7 +23,7 @@ export function getInternalAuthorizeRouter(): Router {
 
   router.post(
     '/accessKey',
-    InternalPermissionMiddleware(PERMISSION.AUTHORIZE_ACCESS_KEYS),
+    InternalPermissionMiddleware(PERMISSION.AUTHORIZE_ACCESS_KEY),
     Wrapper(async (req, res) => {
       const accessKey = await AccessKey.authorizeWithAccessKey(req.body);
       res.json({ opcode: OPCODE.SUCCESS, accessKey });
