@@ -1,12 +1,14 @@
-import InternalPermissionMiddleware, {
+import {
+  InternalPermissionMiddleware,
+  Log,
+  OPCODE,
   PERMISSION,
-} from '../../middlewares/internal/permissions';
-import { OPCODE, Wrapper } from '../../tools';
+  Wrapper,
+} from '../..';
 
-import { Log } from '../../controllers';
 import { Router } from 'express';
 
-export default function getInternalLogsRouter(): Router {
+export function getInternalLogsRouter(): Router {
   const router = Router();
 
   router.get(

@@ -1,12 +1,15 @@
-import AccessKey from '../../../controllers/accessKey';
-import InternalPermissionMiddleware from '../../../middlewares/internal/permissions';
-import InternalPlatformAccessKeyMiddleware from '../../../middlewares/internal/platform/accessKey';
-import OPCODE from '../../../tools/opcode';
-import { PERMISSION } from '../../../middlewares/internal';
-import { Router } from 'express';
-import Wrapper from '../../../tools/wrapper';
+import {
+  AccessKey,
+  InternalPermissionMiddleware,
+  InternalPlatformAccessKeyMiddleware,
+  OPCODE,
+  PERMISSION,
+  Wrapper,
+} from '../../..';
 
-export default function getInternalPlatformsAccessKeysRouter(): Router {
+import { Router } from 'express';
+
+export function getInternalPlatformsAccessKeysRouter(): Router {
   const router = Router();
 
   router.get(

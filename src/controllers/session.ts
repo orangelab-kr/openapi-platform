@@ -1,4 +1,4 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { Database, InternalError, Joi, Log, OPCODE, PATTERN, User } from '..';
 import {
   PlatformLogType,
   PlatformModel,
@@ -8,13 +8,11 @@ import {
   PlatformUserSessionModel,
 } from '@prisma/client';
 
-import Log from './log';
-import { User } from '.';
 import { compareSync } from 'bcryptjs';
 import { randomBytes } from 'crypto';
 
 const { prisma } = Database;
-export default class Session {
+export class Session {
   /** 이메일, 비밀번호를 사용하여 로그인을 합니다. */
   public static async loginUserByEmail(props: {
     email: string;

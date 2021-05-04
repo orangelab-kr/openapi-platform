@@ -1,11 +1,9 @@
-import { Log } from '../controllers';
-import OPCODE from '../tools/opcode';
-import PermissionGroup from '../controllers/permissionGroup';
+import { Log, OPCODE, PermissionGroup, Wrapper } from '..';
+
 import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
-import Wrapper from '../tools/wrapper';
 
-export default function getPermissionGroupsRouter(): Router {
+export function getPermissionGroupsRouter(): Router {
   const router = Router();
 
   router.get(

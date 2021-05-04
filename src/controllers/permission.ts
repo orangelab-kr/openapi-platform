@@ -1,14 +1,14 @@
 import { PermissionModel, Prisma } from '@prisma/client';
 
-import Database from '../tools/database';
-import InternalError from '../tools/error';
-import Joi from '../tools/joi';
-import { OPCODE } from '../tools';
-import PATTERN from '../tools/pattern';
+import { Database } from '..';
+import { InternalError } from '..';
+import { Joi } from '..';
+import { OPCODE } from '..';
+import { PATTERN } from '..';
 
 const { prisma } = Database;
 
-export default class Permission {
+export class Permission {
   /** 권한을 불러옵니다. 없을 경우 오류를 발생합니다. */
   public static async getPermissionOrThrow(
     permissionId: string

@@ -1,21 +1,23 @@
 import {
+  Database,
+  InternalError,
+  Joi,
+  OPCODE,
+  PATTERN,
+  PermissionGroup,
+} from '..';
+import {
   PlatformModel,
   PlatformUserMethodProvider,
   PlatformUserModel,
   Prisma,
 } from '@prisma/client';
 
-import Database from '../tools/database';
-import InternalError from '../tools/error';
-import Joi from '../tools/joi';
-import { OPCODE } from '../tools';
-import PATTERN from '../tools/pattern';
-import PermissionGroup from './permissionGroup';
 import { hashSync } from 'bcryptjs';
 
 const { prisma } = Database;
 
-export default class User {
+export class User {
   /** 사용자를 생성합니다. */
   public static async createUser(
     platform: PlatformModel,

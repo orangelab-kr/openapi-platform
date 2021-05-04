@@ -1,17 +1,22 @@
-import InternalPermissionMiddleware, {
+import {
+  InternalPermissionMiddleware,
+  InternalPlatformMiddleware,
+  OPCODE,
   PERMISSION,
-} from '../../../middlewares/internal/permissions';
+  Platform,
+  Wrapper,
+  getInternalPlatformsAccessKeysRouter,
+  getInternalPlatformsLogsRouter,
+  getInternalPlatformsUsersRouter,
+} from '../../..';
 
-import InternalPlatformMiddleware from '../../../middlewares/internal/platform';
-import OPCODE from '../../../tools/opcode';
-import Platform from '../../../controllers/platform';
 import { Router } from 'express';
-import Wrapper from '../../../tools/wrapper';
-import getInternalPlatformsAccessKeysRouter from './accessKeys';
-import getInternalPlatformsLogsRouter from './logs';
-import getInternalPlatformsUsersRouter from './users';
 
-export default function getInternalPlatformsRouter(): Router {
+export * from './accessKeys';
+export * from './logs';
+export * from './users';
+
+export function getInternalPlatformsRouter(): Router {
   const router = Router();
 
   router.use(

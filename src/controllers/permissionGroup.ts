@@ -1,8 +1,8 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
 
 const { prisma } = Database;
-export default class PermissionGroup {
+export class PermissionGroup {
   /** 권한 그룹을 불러옵니다. 없으면 오류를 발생합니다. */
   public static async getPermissionGroupOrThrow(
     permissionGroupId: string,

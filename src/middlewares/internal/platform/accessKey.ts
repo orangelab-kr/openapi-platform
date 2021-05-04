@@ -1,9 +1,6 @@
-import { InternalError, OPCODE, Wrapper } from '../../../tools';
+import { AccessKey, Callback, InternalError, OPCODE, Wrapper } from '../../..';
 
-import { AccessKey } from '../../../controllers';
-import { Callback } from '../../../tools/wrapper';
-
-export default function InternalPlatformAccessKeyMiddleware(): Callback {
+export function InternalPlatformAccessKeyMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       internal: { platform },

@@ -1,12 +1,15 @@
-import AccessKey from '../controllers/accessKey';
-import { Log } from '../controllers';
-import OPCODE from '../tools/opcode';
-import { PlatformAccessKeyMiddleware } from '../middlewares';
+import {
+  AccessKey,
+  Log,
+  OPCODE,
+  PlatformAccessKeyMiddleware,
+  Wrapper,
+} from '..';
+
 import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
-import Wrapper from '../tools/wrapper';
 
-export default function getAccessKeysRouter(): Router {
+export function getAccessKeysRouter(): Router {
   const router = Router();
 
   router.get(

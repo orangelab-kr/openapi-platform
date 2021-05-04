@@ -1,4 +1,11 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import {
+  Database,
+  InternalError,
+  Joi,
+  OPCODE,
+  PATTERN,
+  PermissionGroup,
+} from '..';
 import {
   PermissionGroupModel,
   PermissionModel,
@@ -7,11 +14,9 @@ import {
   Prisma,
 } from '@prisma/client';
 
-import PermissionGroup from './permissionGroup';
-
 const { prisma } = Database;
 
-export default class AccessKey {
+export class AccessKey {
   /** 해당 액세스 키로 인증합니다. */
   public static async authorizeWithAccessKey(props: {
     platformAccessKeyId: string;

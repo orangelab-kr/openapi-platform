@@ -1,9 +1,8 @@
-import { Log } from '../controllers';
-import OPCODE from '../tools/opcode';
-import { Router } from 'express';
-import Wrapper from '../tools/wrapper';
+import { Log, OPCODE, Wrapper } from '..';
 
-export default function getLogsRouter(): Router {
+import { Router } from 'express';
+
+export function getLogsRouter(): Router {
   const router = Router();
 
   router.get(

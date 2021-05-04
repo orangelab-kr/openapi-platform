@@ -1,9 +1,13 @@
-import { AccessKey } from '../controllers';
-import Session from '../controllers/session';
-import { InternalError, OPCODE } from '../tools';
-import Wrapper, { Callback } from '../tools/wrapper';
+import {
+  AccessKey,
+  Callback,
+  InternalError,
+  OPCODE,
+  Session,
+  Wrapper,
+} from '..';
 
-export default function PlatformMiddleware(
+export function PlatformMiddleware(
   only: ('user' | 'accessKey')[] = ['user', 'accessKey']
 ): Callback {
   return Wrapper(async (req, res, next) => {

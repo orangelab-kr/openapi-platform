@@ -1,9 +1,6 @@
-import { InternalError, OPCODE } from '../tools';
-import Wrapper, { Callback } from '../tools/wrapper';
+import { Callback, InternalError, OPCODE, User, Wrapper } from '..';
 
-import { User } from '../controllers';
-
-export default function PlatformUserMiddleware(): Callback {
+export function PlatformUserMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const {
       loggined: { platform },
@@ -19,7 +16,6 @@ export default function PlatformUserMiddleware(): Callback {
 
     const platformUser = await User.getUserOrThrow(platform, platformUserId);
     req.platformUser = platformUser;
-
     next();
   });
 }

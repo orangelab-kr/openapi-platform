@@ -1,9 +1,9 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '../tools';
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PlatformModel, Prisma } from '@prisma/client';
 
 const { prisma } = Database;
 
-export default class Platform {
+export class Platform {
   /** 플랫폼을 생성합니다. */
   public static async createPlatform(props: {
     name: string;

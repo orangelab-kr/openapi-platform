@@ -1,4 +1,4 @@
-export { default as PlatformAccessKeyMiddleware } from './accessKey';
-export { default as InternalMiddleware } from './internal';
-export { default as PlatformMiddleware } from './platform';
-export { default as PlatformUserMiddleware } from './user';
+export * from './accessKey';
+export * from './internal';
+export * from './platform';
+export * from './user';

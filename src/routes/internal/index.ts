@@ -1,11 +1,20 @@
-import { Router } from 'express';
-import getInternalAccessKeysRouter from './accessKeys';
-import getInternalLogsRouter from './logs';
-import getInternalPermissionGroupsRouter from './permissionGroups';
-import getInternalPermissionsRouter from './permissions';
-import getInternalPlatformsRouter from './platforms';
+import {
+  getInternalAccessKeysRouter,
+  getInternalLogsRouter,
+  getInternalPermissionGroupsRouter,
+  getInternalPermissionsRouter,
+  getInternalPlatformsRouter,
+} from '.';
 
-export default function getInternalRouter(): Router {
+import { Router } from 'express';
+
+export * from './accessKeys';
+export * from './logs';
+export * from './permissionGroups';
+export * from './permissions';
+export * from './platforms';
+
+export function getInternalRouter(): Router {
   const router = Router();
 
   router.use('/platforms', getInternalPlatformsRouter());

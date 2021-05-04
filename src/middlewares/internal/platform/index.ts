@@ -1,11 +1,9 @@
-import { InternalError, OPCODE } from '../../../tools';
-import Wrapper, { Callback } from '../../../tools/wrapper';
+import { Callback, InternalError, OPCODE, Platform, Wrapper } from '../../..';
 
-import { Platform } from '../../../controllers';
+export * from './accessKey';
+export * from './user';
 
-export { default as InternalPlatformAccessKeyMiddleware } from './accessKey';
-export { default as InternalPlatformUserMiddleware } from './user';
-export default function InternalPlatformMiddleware(): Callback {
+export function InternalPlatformMiddleware(): Callback {
   return Wrapper(async (req, res, next) => {
     const { platformId } = req.params;
     if (!platformId) {

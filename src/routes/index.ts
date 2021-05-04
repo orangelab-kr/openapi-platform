@@ -1,20 +1,33 @@
-import { InternalError, OPCODE, Wrapper } from '../tools';
-import { InternalMiddleware, PlatformMiddleware } from '../middlewares';
+import {
+  InternalError,
+  InternalMiddleware,
+  OPCODE,
+  PlatformMiddleware,
+  Wrapper,
+  getAccessKeysRouter,
+  getAuthRouter,
+  getInternalRouter,
+  getLogsRouter,
+  getPermissionGroupsRouter,
+  getPermissionsRouter,
+  getUserRouter,
+  logger,
+} from '..';
 import express, { Application } from 'express';
 
-import getAccessKeysRouter from './accessKeys';
-import getAuthRouter from './auth';
-import getInternalRouter from './internal';
-import getLogsRouter from './logs';
-import getPermissionGroupsRouter from './permissionGroups';
-import getPermissionsRouter from './permissions';
-import getUserRouter from './users';
-import logger from '../tools/logger';
+import cors from 'cors';
 import morgan from 'morgan';
 import os from 'os';
-import cors from 'cors';
 
-export default function getRouter(): Application {
+export * from './accessKeys';
+export * from './auth';
+export * from './internal';
+export * from './logs';
+export * from './permissionGroups';
+export * from './permissions';
+export * from './users';
+
+export function getRouter(): Application {
   const router = express();
   InternalError.registerSentry(router);
 

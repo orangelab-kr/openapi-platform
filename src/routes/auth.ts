@@ -1,11 +1,8 @@
-import { OPCODE } from '../tools';
-import { PlatformMiddleware } from '../middlewares';
-import { Router } from 'express';
-import Session from '../controllers/session';
-import { User } from '../controllers';
-import Wrapper from '../tools/wrapper';
+import { OPCODE, PlatformMiddleware, Session, User, Wrapper } from '..';
 
-export default function getAuthRouter(): Router {
+import { Router } from 'express';
+
+export function getAuthRouter(): Router {
   const router = Router();
 
   router.get(
