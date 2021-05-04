@@ -1,5 +1,5 @@
 import {
-  getInternalAccessKeysRouter,
+  getInternalAuthorizeRouter,
   getInternalLogsRouter,
   getInternalPermissionGroupsRouter,
   getInternalPermissionsRouter,
@@ -8,7 +8,7 @@ import {
 
 import { Router } from 'express';
 
-export * from './accessKeys';
+export * from './authorize';
 export * from './logs';
 export * from './permissionGroups';
 export * from './permissions';
@@ -20,7 +20,7 @@ export function getInternalRouter(): Router {
   router.use('/platforms', getInternalPlatformsRouter());
   router.use('/permissions', getInternalPermissionsRouter());
   router.use('/permissionGroups', getInternalPermissionGroupsRouter());
-  router.use('/accessKeys', getInternalAccessKeysRouter());
+  router.use('/authorize', getInternalAuthorizeRouter());
   router.use('/logs', getInternalLogsRouter());
 
   return router;

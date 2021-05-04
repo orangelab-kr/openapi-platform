@@ -14,7 +14,6 @@ export enum PERMISSION {
   USERS_DELETE,
 
   ACCESS_KEYS_LIST,
-  ACCESS_KEYS_AUTHORIZE,
   ACCESS_KEYS_VIEW,
   ACCESS_KEYS_CREATE,
   ACCESS_KEYS_MODIFY,
@@ -34,6 +33,9 @@ export enum PERMISSION {
 
   LOGS_LIST,
   LOGS_VIEW,
+
+  AUTHORIZE_SESSION,
+  AUTHORIZE_ACCESS_KEYS,
 }
 
 export function InternalPermissionMiddleware(permission: PERMISSION): Callback {

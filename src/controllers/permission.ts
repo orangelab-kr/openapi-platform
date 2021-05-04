@@ -1,10 +1,5 @@
+import { Database, InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PermissionModel, Prisma } from '@prisma/client';
-
-import { Database } from '..';
-import { InternalError } from '..';
-import { Joi } from '..';
-import { OPCODE } from '..';
-import { PATTERN } from '..';
 
 const { prisma } = Database;
 

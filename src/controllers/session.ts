@@ -1,5 +1,7 @@
 import { Database, InternalError, Joi, Log, OPCODE, PATTERN, User } from '..';
 import {
+  PermissionGroupModel,
+  PermissionModel,
   PlatformLogType,
   PlatformModel,
   PlatformUserMethodModel,
@@ -13,6 +15,44 @@ import { randomBytes } from 'crypto';
 
 const { prisma } = Database;
 export class Session {
+  /** 해당 세션 아이디로 인증합니다. */
+  public static async authorizeWithSessionId(props: {
+    sessionId: string;
+    permissionIds?: string[];
+  }): Promise<PlatformUserModel & { platform: PlatformModel }> {
+    const schema = Joi.object({
+      sessionId: PATTERN.PLATFORM.USER.SESSION_ID,
+      permissionIds: PATTERN.PERMISSION.MULTIPLE.optional(),
+    });
+
+    const { sessionId, permissionIds } = await schema.validateAsync(props);
+    let session:
+      | (PlatformUserSessionModel & {
+          platformUser: PlatformUserModel & {
+            platform: PlatformModel;
+            permissionGroup: PermissionGroupModel & {
+              permissions: PermissionModel[];
+            };
+          };
+        })
+      | undefined;
+
+    try {
+      session = await Session.getUserSession(sessionId);
+    } catch (err) {
+      throw new InternalError(
+        '로그아웃되었습니다. 다시 로그인해주세요.',
+        OPCODE.REQUIRED_LOGIN
+      );
+    }
+
+    if (permissionIds) {
+      User.hasPermissions(session.platformUser, permissionIds);
+    }
+
+    return session.platformUser;
+  }
+
   /** 이메일, 비밀번호를 사용하여 로그인을 합니다. */
   public static async loginUserByEmail(props: {
     email: string;
@@ -157,7 +197,12 @@ export class Session {
     platformUserSessionId: string
   ): Promise<
     PlatformUserSessionModel & {
-      platformUser: PlatformUserModel & { platform: PlatformModel };
+      platformUser: PlatformUserModel & {
+        platform: PlatformModel;
+        permissionGroup: PermissionGroupModel & {
+          permissions: PermissionModel[];
+        };
+      };
     }
   > {
     const { findFirst } = prisma.platformUserSessionModel;

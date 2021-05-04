@@ -7,6 +7,8 @@ import {
   PermissionGroup,
 } from '..';
 import {
+  PermissionGroupModel,
+  PermissionModel,
   PlatformModel,
   PlatformUserMethodProvider,
   PlatformUserModel,
@@ -18,6 +20,29 @@ import { hashSync } from 'bcryptjs';
 const { prisma } = Database;
 
 export class User {
+  public static hasPermissions(
+    user: PlatformUserModel & {
+      platform: PlatformModel;
+      permissionGroup: PermissionGroupModel & {
+        permissions: PermissionModel[];
+      };
+    },
+    requiredPermissions: string[]
+  ): void {
+    const permissions = user.permissionGroup.permissions.map(
+      ({ permissionId }: { permissionId: string }) => permissionId
+    );
+
+    requiredPermissions.forEach((permission: string) => {
+      if (!permissions.includes(permission)) {
+        throw new InternalError(
+          `접근할 권한이 없습니다. (${permission})`,
+          OPCODE.ACCESS_DENIED
+        );
+      }
+    });
+  }
+
   /** 사용자를 생성합니다. */
   public static async createUser(
     platform: PlatformModel,

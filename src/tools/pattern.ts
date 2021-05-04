@@ -40,6 +40,7 @@ export const PATTERN = {
       ID: Joi.string().uuid().required(),
       NAME: Joi.string().min(2).max(16).required(),
       EMAIL: Joi.string().email().required(),
+      SESSION_ID: Joi.string().required(),
       PHONE: Joi.string()
         .regex(/^\+(\d*)$/)
         .messages({
