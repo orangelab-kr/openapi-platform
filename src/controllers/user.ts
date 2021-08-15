@@ -202,7 +202,11 @@ export class User {
     } = await schema.validateAsync(props);
     const { platformId } = platform;
     const orderBy = { [orderByField]: orderBySort };
-    const include = { permissionGroup: true };
+    const include = {
+      platform: true,
+      permissionGroup: { include: { permissions: true } },
+    };
+
     const where: Prisma.PlatformUserModelWhereInput = {
       platform: { platformId },
       OR: [
@@ -263,7 +267,10 @@ export class User {
   ): Promise<PlatformUserModel | null> {
     const user = await prisma.platformUserModel.findFirst({
       where: { phone },
-      include: { permissionGroup: true },
+      include: {
+        platform: true,
+        permissionGroup: { include: { permissions: true } },
+      },
     });
 
     return user;
@@ -290,7 +297,10 @@ export class User {
   ): Promise<PlatformUserModel | null> {
     const user = await prisma.platformUserModel.findFirst({
       where: { email },
-      include: { permissionGroup: true },
+      include: {
+        platform: true,
+        permissionGroup: { include: { permissions: true } },
+      },
     });
 
     return user;
@@ -304,7 +314,10 @@ export class User {
     const { platformId } = platform;
     const user = await prisma.platformUserModel.findFirst({
       where: { platformUserId, platform: { platformId } },
-      include: { permissionGroup: true },
+      include: {
+        platform: true,
+        permissionGroup: { include: { permissions: true } },
+      },
     });
 
     return user;

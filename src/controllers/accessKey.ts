@@ -94,7 +94,11 @@ export class AccessKey {
     } = await schema.validateAsync(props);
     const { platformId } = platform;
     const orderBy = { [orderByField]: orderBySort };
-    const include = { permissionGroup: true };
+    const include = {
+      platform: true,
+      permissionGroup: { include: { permissions: true } },
+    };
+
     const where: Prisma.PlatformAccessKeyModelWhereInput = {
       platform: { platformId },
       OR: [
@@ -168,10 +172,13 @@ export class AccessKey {
   ): Promise<PlatformAccessKeyModel | null> {
     const { platformId } = platform;
     const accessKey = await prisma.platformAccessKeyModel.findFirst({
-      include: { permissionGroup: true },
       where: {
         platform: { platformId },
         platformAccessKeyId,
+      },
+      include: {
+        platform: true,
+        permissionGroup: { include: { permissions: true } },
       },
     });
 
