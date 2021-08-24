@@ -1,5 +1,6 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '..';
 import { PlatformModel, Prisma } from '@prisma/client';
+import { InternalError, Joi, OPCODE, PATTERN } from '..';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
@@ -95,13 +96,8 @@ export class Platform {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT,
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const orderBy = { [orderByField]: orderBySort };
     const where: Prisma.PlatformModelWhereInput = {
       OR: [

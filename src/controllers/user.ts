@@ -1,12 +1,4 @@
 import {
-  Database,
-  InternalError,
-  Joi,
-  OPCODE,
-  PATTERN,
-  PermissionGroup,
-} from '..';
-import {
   PermissionGroupModel,
   PermissionModel,
   PlatformModel,
@@ -14,8 +6,9 @@ import {
   PlatformUserModel,
   Prisma,
 } from '@prisma/client';
-
 import { hashSync } from 'bcryptjs';
+import { InternalError, Joi, OPCODE, PATTERN, PermissionGroup } from '..';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
@@ -62,13 +55,8 @@ export class User {
       password: PATTERN.PLATFORM.USER.PASSWORD,
     });
 
-    const {
-      name,
-      email,
-      phone,
-      password,
-      permissionGroupId,
-    } = await schema.validateAsync(props);
+    const { name, email, phone, password, permissionGroupId } =
+      await schema.validateAsync(props);
     const isExists = await Promise.all([
       User.isExistsPlatformUserEmail(email),
       User.isExistsPlatformUserPhone(phone),
@@ -122,13 +110,8 @@ export class User {
       password: PATTERN.PLATFORM.USER.PASSWORD.optional(),
     });
 
-    const {
-      name,
-      email,
-      phone,
-      password,
-      permissionGroupId,
-    } = await schema.validateAsync(props);
+    const { name, email, phone, password, permissionGroupId } =
+      await schema.validateAsync(props);
     const isExists = await Promise.all([
       User.isExistsPlatformUserEmail(email),
       User.isExistsPlatformUserPhone(phone),
@@ -193,13 +176,8 @@ export class User {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT,
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const { platformId } = platform;
     const orderBy = { [orderByField]: orderBySort };
     const include = {

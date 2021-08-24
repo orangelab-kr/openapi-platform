@@ -1,4 +1,3 @@
-import { Database, InternalError, Joi, OPCODE, PATTERN } from '..';
 import {
   PlatformAccessKeyModel,
   PlatformLogModel,
@@ -7,8 +6,9 @@ import {
   PlatformUserModel,
   Prisma,
 } from '@prisma/client';
-
 import { Request } from 'express';
+import { InternalError, Joi, OPCODE, PATTERN } from '..';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
@@ -102,9 +102,10 @@ export class Log {
       platformLogType: PATTERN.PLATFORM.LOG.TYPE.optional(),
       platformUserId: PATTERN.PLATFORM.USER.ID.optional(),
       platformAccessKey: PATTERN.PLATFORM.ACCESS_KEY.ID.optional(),
-      orderByField: PATTERN.PAGINATION.ORDER_BY.FIELD.valid(
-        'createdAt'
-      ).default('createdAt'),
+      orderByField:
+        PATTERN.PAGINATION.ORDER_BY.FIELD.valid('createdAt').default(
+          'createdAt'
+        ),
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.default('desc'),
     });
 

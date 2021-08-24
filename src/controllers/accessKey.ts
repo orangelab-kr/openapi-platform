@@ -1,18 +1,12 @@
 import {
-  Database,
-  InternalError,
-  Joi,
-  OPCODE,
-  PATTERN,
-  PermissionGroup,
-} from '..';
-import {
   PermissionGroupModel,
   PermissionModel,
   PlatformAccessKeyModel,
   PlatformModel,
   Prisma,
 } from '@prisma/client';
+import { InternalError, Joi, OPCODE, PATTERN, PermissionGroup } from '..';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 
@@ -29,11 +23,8 @@ export class AccessKey {
       permissionIds: PATTERN.PERMISSION.MULTIPLE.optional(),
     });
 
-    const {
-      platformAccessKeyId,
-      platformSecretAccessKey,
-      permissionIds,
-    } = await schema.validateAsync(props);
+    const { platformAccessKeyId, platformSecretAccessKey, permissionIds } =
+      await schema.validateAsync(props);
     const { findFirst, updateMany } = prisma.platformAccessKeyModel;
     const include: Prisma.PlatformAccessKeyModelInclude = {
       platform: true,
@@ -85,13 +76,8 @@ export class AccessKey {
       orderBySort: PATTERN.PAGINATION.ORDER_BY.SORT.default('desc'),
     });
 
-    const {
-      take,
-      skip,
-      search,
-      orderByField,
-      orderBySort,
-    } = await schema.validateAsync(props);
+    const { take, skip, search, orderByField, orderBySort } =
+      await schema.validateAsync(props);
     const { platformId } = platform;
     const orderBy = { [orderByField]: orderBySort };
     const include = {

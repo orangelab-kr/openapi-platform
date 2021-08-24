@@ -1,4 +1,3 @@
-import { Database, InternalError, Joi, Log, OPCODE, PATTERN, User } from '..';
 import {
   PermissionGroupModel,
   PermissionModel,
@@ -9,9 +8,10 @@ import {
   PlatformUserModel,
   PlatformUserSessionModel,
 } from '@prisma/client';
-
 import { compareSync } from 'bcryptjs';
 import { randomBytes } from 'crypto';
+import { InternalError, Joi, Log, OPCODE, PATTERN, User } from '..';
+import { Database } from '../tools';
 
 const { prisma } = Database;
 export class Session {
@@ -193,9 +193,7 @@ export class Session {
   }
 
   /** 세션 ID 로 사용자를 불러옵니다. */
-  public static async getUserSession(
-    platformUserSessionId: string
-  ): Promise<
+  public static async getUserSession(platformUserSessionId: string): Promise<
     PlatformUserSessionModel & {
       platformUser: PlatformUserModel & {
         platform: PlatformModel;
