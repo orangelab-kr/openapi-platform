@@ -1,15 +1,17 @@
+import cors from 'cors';
 import express from 'express';
 import serverless from 'serverless-http';
 import { getRouter, InternalError, LoggerMiddleware, OPCODE, Wrapper } from '.';
 
-export * from './middlewares';
 export * from './controllers';
+export * from './middlewares';
 export * from './routes';
 export * from './tools';
 
 const app = express();
 InternalError.registerSentry(app);
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(LoggerMiddleware());
