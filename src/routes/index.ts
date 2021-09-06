@@ -10,7 +10,6 @@ import {
   getUserRouter,
   InternalMiddleware,
   OPCODE,
-  PlatformMiddleware,
   Wrapper,
 } from '..';
 
@@ -27,15 +26,11 @@ export function getRouter(): Router {
 
   router.use('/internal', InternalMiddleware(), getInternalRouter());
   router.use('/auth', getAuthRouter());
-  router.use('/logs', PlatformMiddleware(), getLogsRouter());
-  router.use('/users', PlatformMiddleware(), getUserRouter());
-  router.use('/accessKeys', PlatformMiddleware(), getAccessKeysRouter());
-  router.use('/permissions', PlatformMiddleware(), getPermissionsRouter());
-  router.use(
-    '/permissionGroups',
-    PlatformMiddleware(),
-    getPermissionGroupsRouter()
-  );
+  router.use('/logs', getLogsRouter());
+  router.use('/users', getUserRouter());
+  router.use('/accessKeys', getAccessKeysRouter());
+  router.use('/permissions', getPermissionsRouter());
+  router.use('/permissionGroups', getPermissionGroupsRouter());
 
   router.get(
     '/',

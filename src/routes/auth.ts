@@ -7,7 +7,7 @@ export function getAuthRouter(): Router {
 
   router.get(
     '/',
-    PlatformMiddleware(),
+    PlatformMiddleware({ permissionIds: ['auth.view'], final: true }),
     Wrapper(async (req, res) => {
       const { platformUser, platformAccessKey } = req.loggined;
       res.json({
@@ -20,7 +20,11 @@ export function getAuthRouter(): Router {
 
   router.post(
     '/',
-    PlatformMiddleware(['user']),
+    PlatformMiddleware({
+      only: ['user'],
+      permissionIds: ['auth.update'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const { body, loggined } = req;
       delete body.permissionGroupId;
@@ -53,7 +57,11 @@ export function getAuthRouter(): Router {
 
   router.delete(
     '/',
-    PlatformMiddleware(['user']),
+    PlatformMiddleware({
+      only: ['user'],
+      permissionIds: ['auth.logout-all'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       await Session.revokeAllSession(req.loggined.platformUser);
       res.json({ opcode: OPCODE.SUCCESS });

@@ -1,13 +1,20 @@
-import { Log, OPCODE, PlatformUserMiddleware, User, Wrapper } from '..';
-
 import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
+import {
+  Log,
+  OPCODE,
+  PlatformMiddleware,
+  PlatformUserMiddleware,
+  User,
+  Wrapper,
+} from '..';
 
 export function getUserRouter(): Router {
   const router = Router();
 
   router.get(
     '/',
+    PlatformMiddleware({ permissionIds: ['users.list'], final: true }),
     Wrapper(async (req, res) => {
       const { loggined, query } = req;
       const { total, platformUsers } = await User.getUsers(
@@ -21,6 +28,7 @@ export function getUserRouter(): Router {
 
   router.get(
     '/:platformUserId',
+    PlatformMiddleware({ permissionIds: ['users.view'], final: true }),
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platformUser } = req;
@@ -30,6 +38,7 @@ export function getUserRouter(): Router {
 
   router.post(
     '/',
+    PlatformMiddleware({ permissionIds: ['users.create'], final: true }),
     Wrapper(async (req, res) => {
       const { loggined, body } = req;
       const { platformUserId } = await User.createUser(loggined.platform, body);
@@ -45,6 +54,7 @@ export function getUserRouter(): Router {
 
   router.post(
     '/:platformUserId',
+    PlatformMiddleware({ permissionIds: ['users.update'], final: true }),
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { platformUser, body } = req;
@@ -62,6 +72,7 @@ export function getUserRouter(): Router {
 
   router.delete(
     '/:platformUserId',
+    PlatformMiddleware({ permissionIds: ['users.delete'], final: true }),
     PlatformUserMiddleware(),
     Wrapper(async (req, res) => {
       const { loggined, platformUser } = req;

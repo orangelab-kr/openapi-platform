@@ -1,25 +1,31 @@
-import { Log, OPCODE, PermissionGroup, Wrapper } from '..';
-
 import { PlatformLogType } from '@prisma/client';
 import { Router } from 'express';
+import { Log, OPCODE, PermissionGroup, PlatformMiddleware, Wrapper } from '..';
 
 export function getPermissionGroupsRouter(): Router {
   const router = Router();
 
   router.get(
     '/',
+    PlatformMiddleware({
+      permissionIds: ['permissionGroups.list'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const { query, loggined } = req;
-      const {
-        total,
-        permissionGroups,
-      } = await PermissionGroup.getPermissionGroups(query, loggined.platform);
+      const { total, permissionGroups } =
+        await PermissionGroup.getPermissionGroups(query, loggined.platform);
       res.json({ opcode: OPCODE.SUCCESS, permissionGroups, total });
     })
   );
 
   router.get(
     '/:permissionGroupId',
+    PlatformMiddleware({
+      permissionIds: ['permissionGroups.view'],
+      final: true,
+    }),
+
     Wrapper(async (req, res) => {
       const {
         loggined: { platform },
@@ -36,6 +42,10 @@ export function getPermissionGroupsRouter(): Router {
 
   router.post(
     '/',
+    PlatformMiddleware({
+      permissionIds: ['permissionGroups.create'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const { loggined, body } = req;
       const { permissionGroupId } = await PermissionGroup.createPermissionGroup(
@@ -55,6 +65,10 @@ export function getPermissionGroupsRouter(): Router {
 
   router.post(
     '/:permissionGroupId',
+    PlatformMiddleware({
+      permissionIds: ['permissionGroups.update'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const {
         body,
@@ -79,6 +93,10 @@ export function getPermissionGroupsRouter(): Router {
 
   router.delete(
     '/:permissionGroupId',
+    PlatformMiddleware({
+      permissionIds: ['permissionGroups.delete'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const {
         loggined: { platform },

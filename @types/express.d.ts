@@ -8,6 +8,7 @@ import 'express';
 declare global {
   namespace Express {
     interface Request {
+      permissionIds: string[];
       platform: PlatformModel;
       platformUser: PlatformUserModel;
       platformAccessKey: PlatformAccessKeyModel;

@@ -1,12 +1,15 @@
-import { Log, OPCODE, Wrapper } from '..';
-
 import { Router } from 'express';
+import { Log, OPCODE, PlatformMiddleware, Wrapper } from '..';
 
 export function getLogsRouter(): Router {
   const router = Router();
 
   router.get(
     '/',
+    PlatformMiddleware({
+      permissionIds: ['logs.list'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const { query, loggined } = req;
       const { total, platformLogs } = await Log.getLogs(
@@ -20,6 +23,10 @@ export function getLogsRouter(): Router {
 
   router.get(
     '/:platformLogId',
+    PlatformMiddleware({
+      permissionIds: ['logs.view'],
+      final: true,
+    }),
     Wrapper(async (req, res) => {
       const {
         loggined: { platform },

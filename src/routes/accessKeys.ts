@@ -3,6 +3,7 @@ import {
   Log,
   OPCODE,
   PlatformAccessKeyMiddleware,
+  PlatformMiddleware,
   Wrapper,
 } from '..';
 
@@ -14,6 +15,7 @@ export function getAccessKeysRouter(): Router {
 
   router.get(
     '/',
+    PlatformMiddleware({ permissionIds: ['accessKeys.list'], final: true }),
     Wrapper(async (req, res) => {
       const { loggined, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
@@ -27,12 +29,11 @@ export function getAccessKeysRouter(): Router {
 
   router.post(
     '/',
+    PlatformMiddleware({ permissionIds: ['accessKeys.create'], final: true }),
     Wrapper(async (req, res) => {
       const { loggined, body } = req;
-      const {
-        platformAccessKeyId,
-        platformSecretAccessKey,
-      } = await AccessKey.createAccessKey(loggined.platform, body);
+      const { platformAccessKeyId, platformSecretAccessKey } =
+        await AccessKey.createAccessKey(loggined.platform, body);
       Log.createRequestLog(
         req,
         PlatformLogType.ACCESS_KEY_CREATE,
@@ -49,6 +50,7 @@ export function getAccessKeysRouter(): Router {
 
   router.get(
     '/:platformAccessKeyId',
+    PlatformMiddleware({ permissionIds: ['accessKeys.view'], final: true }),
     PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { platformAccessKey } = req;
@@ -58,6 +60,7 @@ export function getAccessKeysRouter(): Router {
 
   router.post(
     '/:platformAccessKeyId',
+    PlatformMiddleware({ permissionIds: ['accessKeys.update'], final: true }),
     PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { body, platformAccessKey } = req;
@@ -75,6 +78,7 @@ export function getAccessKeysRouter(): Router {
 
   router.delete(
     '/:platformAccessKeyId',
+    PlatformMiddleware({ permissionIds: ['accessKeys.delete'], final: true }),
     PlatformAccessKeyMiddleware(),
     Wrapper(async (req, res) => {
       const { loggined, platformAccessKey } = req;

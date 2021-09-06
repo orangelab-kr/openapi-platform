@@ -8,23 +8,42 @@ import {
 } from '..';
 
 export function PlatformMiddleware(
-  only: ('user' | 'accessKey')[] = ['user', 'accessKey']
+  props: {
+    only?: ('user' | 'accessKey')[];
+    permissionIds?: string[];
+    final?: boolean;
+  } = {}
 ): Callback {
+  const { only, permissionIds, final } = {
+    only: ['user', 'accessKey'],
+    permissionIds: [],
+    final: false,
+    ...props,
+  };
+
   return Wrapper(async (req, res, next) => {
+    if (req.permissionIds === undefined) req.permissionIds = [];
+    req.permissionIds.push(...permissionIds);
+
+    if (!final) return next();
     const { headers } = req;
     const platformAccessKeyId = `${headers['x-hikick-platform-access-key-id']}`;
     if (only.includes('user') && headers.authorization) {
-      const platformUserSessionId = headers.authorization.substr(7);
-      const session = await Session.getUserSession(platformUserSessionId);
+      const sessionId = headers.authorization.substr(7);
+      const platformUser = await Session.authorizeWithSessionId({
+        sessionId,
+        permissionIds,
+      });
 
       req.loggined = <any>{};
-      req.loggined.platform = session.platformUser.platform;
-      req.loggined.platformUser = session.platformUser;
+      req.loggined.platform = platformUser.platform;
+      req.loggined.platformUser = platformUser;
     } else if (only.includes('accessKey') && platformAccessKeyId) {
       const platformSecretAccessKey = `${headers['x-hikick-platform-secret-access-key']}`;
       const accessKey = await AccessKey.authorizeWithAccessKey({
         platformAccessKeyId,
         platformSecretAccessKey,
+        permissionIds,
       });
 
       req.loggined = <any>{};
