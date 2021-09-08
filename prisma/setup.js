@@ -145,18 +145,224 @@ async function main() {
     '액세스키를 삭제합니다.'
   );
 
-  /** 운전면허 - 검증 */
+  /** 운전면허 */
   await setDefaultPermission(
     'license.validate',
     '운전면허 검증',
     '운전면허를 검증합니다.'
   );
 
-  /** 보험 - 조회 */
+  /** 보험 */
   await setDefaultPermission(
     'insurance.view',
     '보험 정보',
     '보험 정보를 조회합니다.'
+  );
+
+  /** 킥보드 */
+  await setDefaultPermission(
+    'kickboards.list',
+    '킥보드 목록',
+    '킥보드 목록을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'kickboards.view',
+    '킥보드 목록',
+    '킥보드 목록을 조회합니다.'
+  );
+
+  /** 위치 */
+  await setDefaultPermission(
+    'regions.geofenceByLocation',
+    '현재 위치',
+    '킥보드 목록을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'regions.list',
+    '지역 목록',
+    '지역 목록을 가져옵니다.'
+  );
+
+  await setDefaultPermission(
+    'regions.all',
+    '모든 지역',
+    '모든 지역 정보를 불러옵니다.'
+  );
+
+  await setDefaultPermission(
+    'regions.view',
+    '지역 조회',
+    '지역 정보를 불러옵니다.'
+  );
+
+  /** 디스카운트 */
+  await setDefaultPermission(
+    'discountGroups.view',
+    '디스카운트 그룹 정보',
+    '디스카운트 그룹 정보를 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'discountGroups.discount.generate',
+    '디스카운트 생성',
+    '디스카운트를 생성합니다.'
+  );
+
+  await setDefaultPermission(
+    'discountGroups.discount.view',
+    '디스카운트 조회',
+    '디스카운트 목록을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'discountGroups.discount.revoke',
+    '디스카운트 삭제',
+    '디스카운트를 강제로 만료 처리합니다.'
+  );
+
+  /** 라이드 - 라이딩 */
+  await setDefaultPermission(
+    'rides.list',
+    '라이드 목록',
+    '라이드 목록을 불러옵니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.start',
+    '라이드 시작',
+    '라이드를 시작합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.lights',
+    '킥보드 라이트',
+    '이용중인 킥보드의 라이트를 컨트롤합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.lock',
+    '킥보드 일시잠금',
+    '이용중인 킥보드를 일시정지, 일시정지 해지합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.terminate',
+    '라이드 종료',
+    '라이드를 종료합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.photo',
+    '라이드 반납사진',
+    '라이드의 반납 사진은 업로드합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.view',
+    '라이드 조회',
+    '라이드를 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.pricing',
+    '라이드 영수증',
+    '라이드 영수증 또는 예상 금액을 확인합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.timeline',
+    '라이드 이동기록',
+    '라이드의 이동 기록을 확인합니다.'
+  );
+
+  /** 라이드 - 결제 */
+  await setDefaultPermission(
+    'rides.payments.all',
+    '전체 결제 기록',
+    '라이드 전체 결제 기록을 불러옵니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.payments.list',
+    '라이드별 결제 기록',
+    '특정 라이드의 결제 목록을 불러옵니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.payments.view',
+    '라이드별 결제 내역',
+    '특정 라이드의 결제 내역을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.payments.process',
+    '라이드별 결제 내역',
+    '특정 라이드의 결제 내역을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.payments.refund',
+    '결제 환불',
+    '결제를 환불합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.payments.create',
+    '결제 생성',
+    '특정 라이드에 대한 결제를 생성할 수 있습니다.'
+  );
+
+  /** 웹훅 - 설정 */
+  await setDefaultPermission(
+    'webhook.settings.list',
+    '웹훅 목록',
+    '웹훅 목록을 가져옵니다.'
+  );
+
+  await setDefaultPermission(
+    'webhook.settings.view',
+    '웹훅 조회',
+    '웹훅을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'webhook.settings.update',
+    '웹훅 수정',
+    '웹훅 주소를 수정합니다.'
+  );
+
+  /** 웹훅 - 요청 */
+  await setDefaultPermission(
+    'webhook.requests.list',
+    '웹훅 요청 목록',
+    '웹훅 요청 목록을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'webhook.requests.view',
+    '웹훅 요청 조회',
+    '웹훅 요청 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'webhook.requests.retry',
+    '웹훅 요청 재시도',
+    '실패한 웹훅 요청를 재시도합니다.'
+  );
+
+  /** 웹훅 - 요청 기록 */
+  await setDefaultPermission(
+    'webhook.requests.histories.list',
+    '웹훅 요청기록 목록',
+    '웹훅 요청기록 목록을 조회합니다.'
+  );
+
+  await setDefaultPermission(
+    'webhook.requests.histories.view',
+    '웹훅 요청기록 조회',
+    '웹훅 요청기록을 조회합니다.'
   );
 
   await createAllPermissionGroup();
