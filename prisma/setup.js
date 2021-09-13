@@ -197,29 +197,35 @@ async function main() {
     '지역 정보를 불러옵니다.'
   );
 
-  /** 디스카운트 */
+  /** 할인 */
+  await setDefaultPermission(
+    'discountGroups.list',
+    '할인 그룹 목록',
+    '할인 그룹 목록을 조회합니다.'
+  );
+
   await setDefaultPermission(
     'discountGroups.view',
-    '디스카운트 그룹 정보',
-    '디스카운트 그룹 정보를 조회합니다.'
+    '할인 그룹 정보',
+    '할인 그룹 정보를 조회합니다.'
   );
 
   await setDefaultPermission(
     'discountGroups.discount.generate',
-    '디스카운트 생성',
-    '디스카운트를 생성합니다.'
+    '할인 생성',
+    '할인을 생성합니다.'
   );
 
   await setDefaultPermission(
     'discountGroups.discount.view',
-    '디스카운트 조회',
-    '디스카운트 목록을 조회합니다.'
+    '할인 조회',
+    '할인 목록을 조회합니다.'
   );
 
   await setDefaultPermission(
     'discountGroups.discount.revoke',
-    '디스카운트 삭제',
-    '디스카운트를 강제로 만료 처리합니다.'
+    '할인 삭제',
+    '할인을 강제로 만료 처리합니다.'
   );
 
   /** 라이드 - 라이딩 */
@@ -257,6 +263,18 @@ async function main() {
     'rides.photo',
     '라이드 반납사진',
     '라이드의 반납 사진은 업로드합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.status',
+    '킥보드 상태',
+    '라이드 중인 킥보드의 상태를 확인합니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.discount',
+    '할인 변경',
+    '라이드 중 할인을 변경할 수 있습니다.'
   );
 
   await setDefaultPermission(
