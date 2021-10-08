@@ -1,8 +1,5 @@
 import { PlatformModel, Prisma } from '@prisma/client';
-import { Joi, PATTERN } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class Platform {
   /** 플랫폼을 생성합니다. */

@@ -5,10 +5,7 @@ import {
   PlatformModel,
   Prisma,
 } from '@prisma/client';
-import { Joi, PATTERN, PermissionGroup } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, PermissionGroup, prisma, RESULT } from '..';
 
 export class AccessKey {
   /** 해당 액세스 키로 인증합니다. */

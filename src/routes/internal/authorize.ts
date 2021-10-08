@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   AccessKey,
   InternalPermissionMiddleware,
-  RESULT,
   PERMISSION,
+  RESULT,
+  Session,
   Wrapper,
 } from '../..';
-
-import { Router } from 'express';
-import { Session } from '../../controllers';
 
 export function getInternalAuthorizeRouter(): Router {
   const router = Router();

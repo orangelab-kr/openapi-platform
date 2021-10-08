@@ -1,8 +1,5 @@
 import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
-import { Joi, PATTERN } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class PermissionGroup {
   /** 권한 그룹을 불러옵니다. 없으면 오류를 발생합니다. */

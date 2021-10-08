@@ -1,8 +1,5 @@
 import { PermissionModel, Prisma } from '@prisma/client';
-import { Joi, PATTERN } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class Permission {
   /** 권한을 불러옵니다. 없을 경우 오류를 발생합니다. */

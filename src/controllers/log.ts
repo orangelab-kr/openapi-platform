@@ -7,10 +7,7 @@ import {
   Prisma,
 } from '@prisma/client';
 import { Request } from 'express';
-import { Joi, PATTERN } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class Log {
   /** HTTP 요청을 기록합니다. */

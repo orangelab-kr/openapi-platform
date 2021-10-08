@@ -7,10 +7,7 @@ import {
   Prisma,
 } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
-import { Joi, PATTERN, PermissionGroup } from '..';
-import { Database, RESULT } from '../tools';
-
-const { prisma } = Database;
+import { Joi, PATTERN, PermissionGroup, prisma, RESULT } from '..';
 
 export class User {
   public static hasPermissions(

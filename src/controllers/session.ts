@@ -10,10 +10,8 @@ import {
 } from '@prisma/client';
 import { compareSync } from 'bcryptjs';
 import { randomBytes } from 'crypto';
-import { Joi, Log, PATTERN, User } from '..';
-import { Database, RESULT } from '../tools';
+import { Joi, Log, PATTERN, prisma, RESULT, User } from '..';
 
-const { prisma } = Database;
 export class Session {
   /** 해당 세션 아이디로 인증합니다. */
   public static async authorizeWithSessionId(props: {
