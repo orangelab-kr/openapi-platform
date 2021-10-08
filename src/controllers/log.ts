@@ -7,8 +7,8 @@ import {
   Prisma,
 } from '@prisma/client';
 import { Request } from 'express';
-import { InternalError, Joi, OPCODE, PATTERN } from '..';
-import { Database } from '../tools';
+import { Joi, PATTERN } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -22,10 +22,7 @@ export class Log {
     const { platform, platformUser, platformAccessKey } = req.loggined;
 
     if (!platform || !(platformUser || platformAccessKey)) {
-      throw new InternalError(
-        '알 수 없는 오류가 발생하였습니다.',
-        OPCODE.ERROR
-      );
+      throw RESULT.INVALID_ERROR();
     }
 
     await prisma.platformLogModel.create({
@@ -158,13 +155,7 @@ export class Log {
     }
   > {
     const log = await Log.getLog(platformLogId, platform);
-    if (!log) {
-      throw new InternalError(
-        '해당 로그를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!log) throw RESULT.CANNOT_FIND_LOG();
     return log;
   }
 

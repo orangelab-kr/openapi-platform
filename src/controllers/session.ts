@@ -10,8 +10,8 @@ import {
 } from '@prisma/client';
 import { compareSync } from 'bcryptjs';
 import { randomBytes } from 'crypto';
-import { InternalError, Joi, Log, OPCODE, PATTERN, User } from '..';
-import { Database } from '../tools';
+import { Joi, Log, PATTERN, User } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 export class Session {
@@ -39,11 +39,8 @@ export class Session {
 
     try {
       session = await Session.getUserSession(sessionId);
-    } catch (err) {
-      throw new InternalError(
-        '로그아웃되었습니다. 다시 로그인해주세요.',
-        OPCODE.REQUIRED_LOGIN
-      );
+    } catch (err: any) {
+      throw RESULT.REQUIRED_LOGIN();
     }
 
     if (permissionIds) {
@@ -71,19 +68,10 @@ export class Session {
         PlatformUserMethodProvider.LOCAL
       );
 
-      if (!compareSync(password, method.identity)) {
-        throw new InternalError(
-          '비밀번호가 일치하지 않습니다.',
-          OPCODE.NOT_FOUND
-        );
-      }
-
+      if (!compareSync(password, method.identity)) throw RESULT.INVALID_ERROR();
       return platformUser;
-    } catch (err) {
-      throw new InternalError(
-        '이메일 또는 비밀번호가 올바르지 않습니다.',
-        OPCODE.NOT_FOUND
-      );
+    } catch (err: any) {
+      throw RESULT.INVALID_EMAIL_OR_PASSWORD();
     }
   }
 
@@ -105,19 +93,10 @@ export class Session {
         PlatformUserMethodProvider.LOCAL
       );
 
-      if (!compareSync(password, method.identity)) {
-        throw new InternalError(
-          '비밀번호가 일치하지 않습니다.',
-          OPCODE.NOT_FOUND
-        );
-      }
-
+      if (!compareSync(password, method.identity)) throw RESULT.INVALID_ERROR();
       return platformUser;
-    } catch (err) {
-      throw new InternalError(
-        '전화번호 또는 비밀번호가 올바르지 않습니다.',
-        OPCODE.NOT_FOUND
-      );
+    } catch (err: any) {
+      throw RESULT.INVALID_PHONE_OR_PASSWORD();
     }
   }
 
@@ -172,10 +151,7 @@ export class Session {
     provider: PlatformUserMethodProvider
   ): Promise<PlatformUserMethodModel> {
     const method = await Session.getUserMethod(platformUser, provider);
-    if (!method) {
-      throw new InternalError('해당 인증 메서드가 없습니다.', OPCODE.NOT_FOUND);
-    }
-
+    if (!method) throw RESULT.NOT_CONNECTED_WITH_METHOD();
     return method;
   }
 
@@ -216,13 +192,7 @@ export class Session {
       },
     });
 
-    if (!session) {
-      throw new InternalError(
-        '로그아웃되었습니다. 다시 로그인해주세요.',
-        OPCODE.REQUIRED_LOGIN
-      );
-    }
-
+    if (!session) throw RESULT.REQUIRED_LOGIN();
     return session;
   }
 }

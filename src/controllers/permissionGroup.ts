@@ -1,6 +1,6 @@
 import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
-import { InternalError, Joi, OPCODE, PATTERN } from '..';
-import { Database } from '../tools';
+import { Joi, PATTERN } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -15,13 +15,7 @@ export class PermissionGroup {
       platform
     );
 
-    if (!permissionGroup) {
-      throw new InternalError(
-        '해당 권한 그룹을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!permissionGroup) throw RESULT.CANNOT_FIND_PERMISSION_GROUP();
     return permissionGroup;
   }
 
@@ -143,14 +137,24 @@ export class PermissionGroup {
     platform?: PlatformModel
   ): Promise<void> {
     const schema = Joi.object({
-      name: PATTERN.PERMISSION.NAME,
-      description: PATTERN.PERMISSION.GROUP.DESCRIPTION,
-      permissionIds: PATTERN.PERMISSION.MULTIPLE,
+      name: PATTERN.PERMISSION.NAME.optional(),
+      description: PATTERN.PERMISSION.GROUP.DESCRIPTION.optional(),
+      permissionIds: PATTERN.PERMISSION.MULTIPLE.optional(),
     });
 
     const { name, description, permissionIds } = await schema.validateAsync(
       props
     );
+
+    const where = { permissionGroupId };
+    const data: Prisma.PermissionGroupModelUpdateInput = { name, description };
+    if (permissionIds) {
+      data.permissions = {
+        set: permissionIds.map((permissionId: string) => ({
+          permissionId,
+        })),
+      };
+    }
 
     if (platform) {
       await PermissionGroup.getPermissionGroupOrThrow(
@@ -159,16 +163,7 @@ export class PermissionGroup {
       );
     }
 
-    await prisma.permissionGroupModel.update({
-      where: { permissionGroupId },
-      data: {
-        name,
-        description,
-        permissions: {
-          set: permissionIds.map((permissionId: string) => ({ permissionId })),
-        },
-      },
-    });
+    await prisma.permissionGroupModel.update({ where, data });
   }
 
   /** 권한 그룹을 삭제합니다. */
@@ -189,21 +184,10 @@ export class PermissionGroup {
 
     const { findFirst, deleteMany } = prisma.permissionGroupModel;
     const permissionGroup = await findFirst({ where, include });
-
-    if (!permissionGroup) {
-      throw new InternalError(
-        '해당 권한 그룹을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!permissionGroup) throw RESULT.CANNOT_FIND_PERMISSION_GROUP();
     const { users, accessKeys } = permissionGroup;
     if (users.length > 0 || accessKeys.length > 0) {
-      throw new InternalError(
-        `해당 권한 그룹을 사용하는 사용자 또는 액세스 키가 있습니다.`,
-        OPCODE.ERROR,
-        { users, accessKeys }
-      );
+      throw RESULT.PERMISSION_GROUP_IS_USING();
     }
 
     await deleteMany({ where: { permissionGroupId } });

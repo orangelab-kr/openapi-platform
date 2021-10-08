@@ -1,7 +1,7 @@
 import {
   AccessKey,
   InternalPermissionMiddleware,
-  OPCODE,
+  RESULT,
   PERMISSION,
   Wrapper,
 } from '../..';
@@ -15,18 +15,18 @@ export function getInternalAuthorizeRouter(): Router {
   router.post(
     '/user',
     InternalPermissionMiddleware(PERMISSION.AUTHORIZE_USER),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const platformUser = await Session.authorizeWithSessionId(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, platformUser });
+      throw RESULT.SUCCESS({ details: { platformUser } });
     })
   );
 
   router.post(
     '/accessKey',
     InternalPermissionMiddleware(PERMISSION.AUTHORIZE_ACCESS_KEY),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const accessKey = await AccessKey.authorizeWithAccessKey(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, accessKey });
+      throw RESULT.SUCCESS({ details: { accessKey } });
     })
   );
 

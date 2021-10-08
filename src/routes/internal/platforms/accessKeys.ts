@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   AccessKey,
   InternalPermissionMiddleware,
   InternalPlatformAccessKeyMiddleware,
-  OPCODE,
   PERMISSION,
+  RESULT,
   Wrapper,
 } from '../../..';
-
-import { Router } from 'express';
 
 export function getInternalPlatformsAccessKeysRouter(): Router {
   const router = Router();
@@ -15,31 +14,30 @@ export function getInternalPlatformsAccessKeysRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { internal, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
         internal.platform,
         query
       );
 
-      res.json({ opcode: OPCODE.SUCCESS, platformAccessKeys, total });
+      throw RESULT.SUCCESS({ details: { platformAccessKeys, total } });
     })
   );
 
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { internal, body } = req;
-      const {
-        platformAccessKeyId,
-        platformSecretAccessKey,
-      } = await AccessKey.createAccessKey(internal.platform, body);
+      const { platformAccessKeyId, platformSecretAccessKey } =
+        await AccessKey.createAccessKey(internal.platform, body);
 
-      res.json({
-        opcode: OPCODE.SUCCESS,
-        platformAccessKeyId,
-        platformSecretAccessKey,
+      throw RESULT.SUCCESS({
+        details: {
+          platformAccessKeyId,
+          platformSecretAccessKey,
+        },
       });
     })
   );
@@ -48,9 +46,9 @@ export function getInternalPlatformsAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_VIEW),
     InternalPlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platformAccessKey } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, platformAccessKey });
+      throw RESULT.SUCCESS({ details: { platformAccessKey } });
     })
   );
 
@@ -58,10 +56,10 @@ export function getInternalPlatformsAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_MODIFY),
     InternalPlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, internal } = req;
       await AccessKey.modifyAccessKey(internal.platformAccessKey, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -69,10 +67,10 @@ export function getInternalPlatformsAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     InternalPermissionMiddleware(PERMISSION.ACCESS_KEYS_DELETE),
     InternalPlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platform, platformAccessKey } = req.internal;
       await AccessKey.deleteAccessKey(platform, platformAccessKey);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

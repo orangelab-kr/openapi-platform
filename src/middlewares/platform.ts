@@ -1,11 +1,4 @@
-import {
-  AccessKey,
-  Callback,
-  InternalError,
-  OPCODE,
-  Session,
-  Wrapper,
-} from '..';
+import { AccessKey, RESULT, Session, Wrapper, WrapperCallback } from '..';
 
 export function PlatformMiddleware(
   props: {
@@ -13,7 +6,7 @@ export function PlatformMiddleware(
     permissionIds?: string[];
     final?: boolean;
   } = {}
-): Callback {
+): WrapperCallback {
   const { only, permissionIds, final } = {
     only: ['user', 'accessKey'],
     permissionIds: [],
@@ -51,13 +44,7 @@ export function PlatformMiddleware(
       req.loggined.platformAccessKey = accessKey;
     }
 
-    if (!req.loggined.platform) {
-      throw new InternalError(
-        '로그인이 필요한 서비스입니다.',
-        OPCODE.REQUIRED_LOGIN
-      );
-    }
-
+    if (!req.loggined.platform) throw RESULT.REQUIRED_LOGIN();
     next();
   });
 }

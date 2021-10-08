@@ -1,12 +1,11 @@
+import { Router } from 'express';
 import {
   InternalPermissionMiddleware,
-  OPCODE,
   PERMISSION,
   Permission,
+  RESULT,
   Wrapper,
 } from '../..';
-
-import { Router } from 'express';
 
 export function getInternalPermissionsRouter(): Router {
   const router = Router();
@@ -14,48 +13,48 @@ export function getInternalPermissionsRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.PERMISSIONS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { total, permissions } = await Permission.getPermissions(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, permissions, total });
+      throw RESULT.SUCCESS({ details: { permissions, total } });
     })
   );
 
   router.get(
     '/:permissionId',
     InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_VIEW),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { permissionId } = req.params;
       const permission = await Permission.getPermissionOrThrow(permissionId);
-      res.json({ opcode: OPCODE.SUCCESS, permission });
+      throw RESULT.SUCCESS({ details: { permission } });
     })
   );
 
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { permissionId } = await Permission.createPermission(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, permissionId });
+      throw RESULT.SUCCESS({ details: { permissionId } });
     })
   );
 
   router.post(
     '/:permissionId',
     InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_MODIFY),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, params } = req;
       await Permission.modifyPermission(params.permissionId, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
   router.delete(
     '/:permissionId',
     InternalPermissionMiddleware(PERMISSION.PERMISSION_GROUPS_DELETE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { permissionId } = req.params;
       await Permission.deletePermission(permissionId);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

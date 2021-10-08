@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Log, OPCODE, PlatformMiddleware, Wrapper } from '..';
+import { Log, PlatformMiddleware, RESULT, Wrapper } from '..';
 
 export function getLogsRouter(): Router {
   const router = Router();
@@ -10,14 +10,14 @@ export function getLogsRouter(): Router {
       permissionIds: ['logs.list'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { query, loggined } = req;
       const { total, platformLogs } = await Log.getLogs(
         query,
         loggined.platform
       );
 
-      res.json({ opcode: OPCODE.SUCCESS, platformLogs, total });
+      throw RESULT.SUCCESS({ details: { platformLogs, total } });
     })
   );
 
@@ -27,14 +27,14 @@ export function getLogsRouter(): Router {
       permissionIds: ['logs.view'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const {
         loggined: { platform },
         params: { platformLogId },
       } = req;
 
       const platformLog = await Log.getLogOrThrow(platformLogId, platform);
-      res.json({ opcode: OPCODE.SUCCESS, platformLog });
+      throw RESULT.SUCCESS({ details: { platformLog } });
     })
   );
 

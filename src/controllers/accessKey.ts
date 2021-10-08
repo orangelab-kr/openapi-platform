@@ -5,8 +5,8 @@ import {
   PlatformModel,
   Prisma,
 } from '@prisma/client';
-import { InternalError, Joi, OPCODE, PATTERN, PermissionGroup } from '..';
-import { Database } from '../tools';
+import { Joi, PATTERN, PermissionGroup } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -42,10 +42,7 @@ export class AccessKey {
 
     const accessKey: any = await findFirst({ include, where });
     if (!accessKey || !accessKey.isEnabled) {
-      throw new InternalError(
-        '잘못된 접근 키입니다.',
-        OPCODE.INVALID_ACCESS_KEY
-      );
+      throw RESULT.NOT_EXISTS_ACCESS_KEY();
     }
 
     if (permissionIds) AccessKey.hasPermissions(accessKey, permissionIds);
@@ -141,13 +138,7 @@ export class AccessKey {
       platformAccessKeyId
     );
 
-    if (!accessKey) {
-      throw new InternalError(
-        '존재하지 않은 액세스 키입니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!accessKey) throw RESULT.CANNOT_FIND_ACCESS_KEY();
     return accessKey;
   }
 
@@ -236,10 +227,7 @@ export class AccessKey {
 
     requiredPermissions.forEach((permission: string) => {
       if (!permissions.includes(permission)) {
-        throw new InternalError(
-          `접근할 권한이 없습니다. (${permission})`,
-          OPCODE.ACCESS_DENIED
-        );
+        throw RESULT.PERMISSION_DENIED({ args: [permission] });
       }
     });
   }

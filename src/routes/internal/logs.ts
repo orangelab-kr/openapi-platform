@@ -1,7 +1,7 @@
 import {
   InternalPermissionMiddleware,
   Log,
-  OPCODE,
+  RESULT,
   PERMISSION,
   Wrapper,
 } from '../..';
@@ -14,23 +14,23 @@ export function getInternalLogsRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.LOGS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { query } = req;
       const { total, platformLogs } = await Log.getLogs(query);
-      res.json({ opcode: OPCODE.SUCCESS, platformLogs, total });
+      throw RESULT.SUCCESS({ details: { platformLogs, total } });
     })
   );
 
   router.get(
     '/:platformLogId',
     InternalPermissionMiddleware(PERMISSION.LOGS_VIEW),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const {
         params: { platformLogId },
       } = req;
 
       const platformLog = await Log.getLogOrThrow(platformLogId);
-      res.json({ opcode: OPCODE.SUCCESS, platformLog });
+      throw RESULT.SUCCESS({ details: { platformLog } });
     })
   );
 

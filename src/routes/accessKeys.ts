@@ -1,14 +1,13 @@
+import { PlatformLogType } from '@prisma/client';
+import { Router } from 'express';
 import {
   AccessKey,
   Log,
-  OPCODE,
   PlatformAccessKeyMiddleware,
   PlatformMiddleware,
+  RESULT,
   Wrapper,
 } from '..';
-
-import { PlatformLogType } from '@prisma/client';
-import { Router } from 'express';
 
 export function getAccessKeysRouter(): Router {
   const router = Router();
@@ -16,21 +15,21 @@ export function getAccessKeysRouter(): Router {
   router.get(
     '/',
     PlatformMiddleware({ permissionIds: ['accessKeys.list'], final: true }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { loggined, query } = req;
       const { platformAccessKeys, total } = await AccessKey.getAccessKeys(
         loggined.platform,
         query
       );
 
-      res.json({ opcode: OPCODE.SUCCESS, platformAccessKeys, total });
+      throw RESULT.SUCCESS({ details: { platformAccessKeys, total } });
     })
   );
 
   router.post(
     '/',
     PlatformMiddleware({ permissionIds: ['accessKeys.create'], final: true }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { loggined, body } = req;
       const { platformAccessKeyId, platformSecretAccessKey } =
         await AccessKey.createAccessKey(loggined.platform, body);
@@ -40,10 +39,11 @@ export function getAccessKeysRouter(): Router {
         `${platformAccessKeyId} 액세스 키를 생성하였습니다.`
       );
 
-      res.json({
-        opcode: OPCODE.SUCCESS,
-        platformAccessKeyId,
-        platformSecretAccessKey,
+      throw RESULT.SUCCESS({
+        details: {
+          platformAccessKeyId,
+          platformSecretAccessKey,
+        },
       });
     })
   );
@@ -52,9 +52,9 @@ export function getAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     PlatformMiddleware({ permissionIds: ['accessKeys.view'], final: true }),
     PlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platformAccessKey } = req;
-      res.json({ opcode: OPCODE.SUCCESS, platformAccessKey });
+      throw RESULT.SUCCESS({ details: { platformAccessKey } });
     })
   );
 
@@ -62,7 +62,7 @@ export function getAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     PlatformMiddleware({ permissionIds: ['accessKeys.update'], final: true }),
     PlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, platformAccessKey } = req;
       const { platformAccessKeyId } = platformAccessKey;
       await AccessKey.modifyAccessKey(platformAccessKey, body);
@@ -72,7 +72,7 @@ export function getAccessKeysRouter(): Router {
         `${platformAccessKeyId} 액세스 키를 수정하였습니다.`
       );
 
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -80,7 +80,7 @@ export function getAccessKeysRouter(): Router {
     '/:platformAccessKeyId',
     PlatformMiddleware({ permissionIds: ['accessKeys.delete'], final: true }),
     PlatformAccessKeyMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { loggined, platformAccessKey } = req;
       const { platformAccessKeyId } = platformAccessKey;
       await AccessKey.deleteAccessKey(loggined.platform, platformAccessKey);
@@ -90,7 +90,7 @@ export function getAccessKeysRouter(): Router {
         `${platformAccessKeyId} 액세스 키를 삭제하였습니다.`
       );
 
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

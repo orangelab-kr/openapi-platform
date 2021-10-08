@@ -1,6 +1,6 @@
-import { AccessKey, Callback, InternalError, OPCODE, Wrapper } from '../../..';
+import { AccessKey, RESULT, Wrapper, WrapperCallback } from '../../..';
 
-export function InternalPlatformAccessKeyMiddleware(): Callback {
+export function InternalPlatformAccessKeyMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const {
       internal: { platform },
@@ -8,10 +8,7 @@ export function InternalPlatformAccessKeyMiddleware(): Callback {
     } = req;
 
     if (!platform || !platformAccessKeyId) {
-      throw new InternalError(
-        '해당 액세스 키를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
+      throw RESULT.CANNOT_FIND_ACCESS_KEY();
     }
 
     const platformAccessKey = await AccessKey.getAccessKeyOrThrow(

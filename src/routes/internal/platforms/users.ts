@@ -1,13 +1,12 @@
+import { Router } from 'express';
 import {
   InternalPermissionMiddleware,
   InternalPlatformUserMiddleware,
-  OPCODE,
   PERMISSION,
+  RESULT,
   User,
   Wrapper,
 } from '../../..';
-
-import { Router } from 'express';
 
 export function getInternalPlatformsUsersRouter(): Router {
   const router = Router();
@@ -15,24 +14,24 @@ export function getInternalPlatformsUsersRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.USERS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { internal, query } = req;
       const { platformUsers, total } = await User.getUsers(
         internal.platform,
         query
       );
 
-      res.json({ opcode: OPCODE.SUCCESS, platformUsers, total });
+      throw RESULT.SUCCESS({ details: { platformUsers, total } });
     })
   );
 
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.USERS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { internal, body } = req;
       const { platformUserId } = await User.createUser(internal.platform, body);
-      res.json({ opcode: OPCODE.SUCCESS, platformUserId });
+      throw RESULT.SUCCESS({ details: { platformUserId } });
     })
   );
 
@@ -40,9 +39,9 @@ export function getInternalPlatformsUsersRouter(): Router {
     '/:platformUserId',
     InternalPermissionMiddleware(PERMISSION.USERS_VIEW),
     InternalPlatformUserMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platformUser } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, platformUser });
+      throw RESULT.SUCCESS({ details: { platformUser } });
     })
   );
 
@@ -50,10 +49,10 @@ export function getInternalPlatformsUsersRouter(): Router {
     '/:platformUserId',
     InternalPermissionMiddleware(PERMISSION.USERS_MODIFY),
     InternalPlatformUserMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, internal } = req;
       await User.modifyUser(internal.platformUser, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -61,10 +60,10 @@ export function getInternalPlatformsUsersRouter(): Router {
     '/:platformUserId',
     InternalPermissionMiddleware(PERMISSION.USERS_DELETE),
     InternalPlatformUserMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platform, platformUser } = req.internal;
       await User.deleteUser(platform, platformUser);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

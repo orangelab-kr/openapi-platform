@@ -1,6 +1,6 @@
 import { PlatformModel, Prisma } from '@prisma/client';
-import { InternalError, Joi, OPCODE, PATTERN } from '..';
-import { Database } from '../tools';
+import { Joi, PATTERN } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -12,16 +12,8 @@ export class Platform {
     const schema = Joi.object({ name: PATTERN.PLATFORM.NAME });
     const { name } = await schema.validateAsync(props);
     const exists = await Platform.isExistsPlatformName(name);
-    if (exists) {
-      throw new InternalError(
-        '이미 존재하는 플랫폼 이름입니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
-
-    const platform = await prisma.platformModel.create({ data: { name } });
-
-    return platform;
+    if (exists) throw RESULT.ALREADY_EXISTS_PLATFORM_NAME();
+    return prisma.platformModel.create({ data: { name } });
   }
 
   /** 플랫폼을 수정합니다. */
@@ -32,17 +24,11 @@ export class Platform {
     }
   ): Promise<void> {
     const schema = Joi.object({ name: PATTERN.PLATFORM.NAME });
-
     const { platformId, name } = platform;
     const data = await schema.validateAsync(props);
     if (name !== props.name) {
       const exists = await Platform.isExistsPlatformName(name);
-      if (exists) {
-        throw new InternalError(
-          '이미 존재하는 플랫폼 이름입니다.',
-          OPCODE.ALREADY_EXISTS
-        );
-      }
+      if (exists) throw RESULT.ALREADY_EXISTS_PLATFORM_NAME();
     }
 
     await prisma.platformModel.update({
@@ -56,13 +42,7 @@ export class Platform {
     platformId: string
   ): Promise<PlatformModel> {
     const platform = await Platform.getPlatform(platformId);
-    if (!platform) {
-      throw new InternalError(
-        '해당 플랫폼을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!platform) throw RESULT.CANNOT_FIND_PLATFORM();
     return platform;
   }
 

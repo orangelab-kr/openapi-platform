@@ -1,19 +1,13 @@
-import { Callback, InternalError, OPCODE, User, Wrapper } from '..';
+import { RESULT, User, Wrapper, WrapperCallback } from '..';
 
-export function PlatformUserMiddleware(): Callback {
+export function PlatformUserMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const {
       loggined: { platform },
       params: { platformUserId },
     } = req;
 
-    if (!platform || !platformUserId) {
-      throw new InternalError(
-        '해당 사용자를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!platform || !platformUserId) throw RESULT.CANNOT_FIND_USER();
     const platformUser = await User.getUserOrThrow(platform, platformUserId);
     req.platformUser = platformUser;
     next();

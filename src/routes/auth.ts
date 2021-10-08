@@ -1,6 +1,5 @@
-import { OPCODE, PlatformMiddleware, Session, User, Wrapper } from '..';
-
 import { Router } from 'express';
+import { PlatformMiddleware, RESULT, Session, User, Wrapper } from '..';
 
 export function getAuthRouter(): Router {
   const router = Router();
@@ -8,12 +7,13 @@ export function getAuthRouter(): Router {
   router.get(
     '/',
     PlatformMiddleware({ permissionIds: ['auth.view'], final: true }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platformUser, platformAccessKey } = req.loggined;
-      res.json({
-        opcode: OPCODE.SUCCESS,
-        platformUser,
-        platformAccessKey,
+      throw RESULT.SUCCESS({
+        details: {
+          platformUser,
+          platformAccessKey,
+        },
       });
     })
   );
@@ -25,33 +25,33 @@ export function getAuthRouter(): Router {
       permissionIds: ['auth.update'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, loggined } = req;
       delete body.permissionGroupId;
       await User.modifyUser(loggined.platformUser, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
   router.post(
     '/email',
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { headers, body } = req;
       const userAgent = headers['user-agent'];
       const platformUser = await Session.loginUserByEmail(body);
       const sessionId = await Session.createSession(platformUser, userAgent);
-      res.json({ opcode: OPCODE.SUCCESS, sessionId });
+      throw RESULT.SUCCESS({ details: { sessionId } });
     })
   );
 
   router.post(
     '/phone',
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { headers, body } = req;
       const userAgent = headers['user-agent'];
       const platformUser = await Session.loginUserByPhone(body);
       const sessionId = await Session.createSession(platformUser, userAgent);
-      res.json({ opcode: OPCODE.SUCCESS, sessionId });
+      throw RESULT.SUCCESS({ details: { sessionId } });
     })
   );
 
@@ -62,9 +62,9 @@ export function getAuthRouter(): Router {
       permissionIds: ['auth.logout-all'],
       final: true,
     }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       await Session.revokeAllSession(req.loggined.platformUser);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

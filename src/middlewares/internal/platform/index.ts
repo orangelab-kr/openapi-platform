@@ -1,18 +1,12 @@
-import { Callback, InternalError, OPCODE, Platform, Wrapper } from '../../..';
+import { Platform, RESULT, Wrapper, WrapperCallback } from '../../..';
 
 export * from './accessKey';
 export * from './user';
 
-export function InternalPlatformMiddleware(): Callback {
+export function InternalPlatformMiddleware(): WrapperCallback {
   return Wrapper(async (req, res, next) => {
     const { platformId } = req.params;
-    if (!platformId) {
-      throw new InternalError(
-        '해당 플랫폼을 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!platformId) throw RESULT.CANNOT_FIND_PLATFORM();
     const platform = await Platform.getPlatformOrThrow(platformId);
     req.internal.platform = platform;
 

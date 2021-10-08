@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { OPCODE, Permission, PlatformMiddleware, Wrapper } from '..';
+import { Permission, PlatformMiddleware, RESULT, Wrapper } from '..';
 
 export function getPermissionsRouter(): Router {
   const router = Router();
@@ -7,19 +7,19 @@ export function getPermissionsRouter(): Router {
   router.get(
     '/',
     PlatformMiddleware({ permissionIds: ['permissions.list'], final: true }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { total, permissions } = await Permission.getPermissions(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, permissions, total });
+      throw RESULT.SUCCESS({ details: { permissions, total } });
     })
   );
 
   router.get(
     '/:permissionId',
     PlatformMiddleware({ permissionIds: ['permissions.view'], final: true }),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { permissionId } = req.params;
       const permission = await Permission.getPermissionOrThrow(permissionId);
-      res.json({ opcode: OPCODE.SUCCESS, permission });
+      throw RESULT.SUCCESS({ details: { permission } });
     })
   );
 

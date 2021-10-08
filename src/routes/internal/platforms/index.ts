@@ -1,16 +1,15 @@
+import { Router } from 'express';
 import {
-  InternalPermissionMiddleware,
-  InternalPlatformMiddleware,
-  OPCODE,
-  PERMISSION,
-  Platform,
-  Wrapper,
   getInternalPlatformsAccessKeysRouter,
   getInternalPlatformsLogsRouter,
   getInternalPlatformsUsersRouter,
+  InternalPermissionMiddleware,
+  InternalPlatformMiddleware,
+  PERMISSION,
+  Platform,
+  RESULT,
+  Wrapper,
 } from '../../..';
-
-import { Router } from 'express';
 
 export * from './accessKeys';
 export * from './logs';
@@ -40,18 +39,18 @@ export function getInternalPlatformsRouter(): Router {
   router.get(
     '/',
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_LIST),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platforms, total } = await Platform.getPlatforms(req.query);
-      res.json({ opcode: OPCODE.SUCCESS, platforms, total });
+      throw RESULT.SUCCESS({ details: { platforms, total } });
     })
   );
 
   router.post(
     '/',
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_CREATE),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platformId } = await Platform.createPlatform(req.body);
-      res.json({ opcode: OPCODE.SUCCESS, platformId });
+      throw RESULT.SUCCESS({ details: { platformId } });
     })
   );
 
@@ -59,9 +58,9 @@ export function getInternalPlatformsRouter(): Router {
     '/:platformId',
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_VIEW),
     InternalPlatformMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platform } = req.internal;
-      res.json({ opcode: OPCODE.SUCCESS, platform });
+      throw RESULT.SUCCESS({ details: { platform } });
     })
   );
 
@@ -69,10 +68,10 @@ export function getInternalPlatformsRouter(): Router {
     '/:platformId',
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_MODIFY),
     InternalPlatformMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { body, internal } = req;
       await Platform.modifyPlatform(internal.platform, body);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 
@@ -80,10 +79,10 @@ export function getInternalPlatformsRouter(): Router {
     '/:platformId',
     InternalPermissionMiddleware(PERMISSION.PLATFORMS_DELETE),
     InternalPlatformMiddleware(),
-    Wrapper(async (req, res) => {
+    Wrapper(async (req) => {
       const { platform } = req.internal;
       await Platform.deletePlatform(platform);
-      res.json({ opcode: OPCODE.SUCCESS });
+      throw RESULT.SUCCESS();
     })
   );
 

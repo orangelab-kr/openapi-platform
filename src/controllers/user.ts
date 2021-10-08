@@ -7,8 +7,8 @@ import {
   Prisma,
 } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
-import { InternalError, Joi, OPCODE, PATTERN, PermissionGroup } from '..';
-import { Database } from '../tools';
+import { Joi, PATTERN, PermissionGroup } from '..';
+import { Database, RESULT } from '../tools';
 
 const { prisma } = Database;
 
@@ -28,10 +28,7 @@ export class User {
 
     requiredPermissions.forEach((permission: string) => {
       if (!permissions.includes(permission)) {
-        throw new InternalError(
-          `접근할 권한이 없습니다. (${permission})`,
-          OPCODE.ACCESS_DENIED
-        );
+        throw RESULT.PERMISSION_DENIED({ args: [permission] });
       }
     });
   }
@@ -62,17 +59,8 @@ export class User {
       User.isExistsPlatformUserPhone(phone),
     ]);
 
-    if (isExists[0]) {
-      throw new InternalError('사용중인 이메일입니다.', OPCODE.ALREADY_EXISTS);
-    }
-
-    if (isExists[1]) {
-      throw new InternalError(
-        '사용중인 전화번호입니다.',
-        OPCODE.ALREADY_EXISTS
-      );
-    }
-
+    if (isExists[0]) throw RESULT.ALREADY_USING_EMAIL();
+    if (isExists[1]) throw RESULT.ALREADY_USING_PHONE();
     await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
 
     const { platformId } = platform;
@@ -118,14 +106,11 @@ export class User {
     ]);
 
     if (email && user.email !== email && isExists[0]) {
-      throw new InternalError('사용중인 이메일입니다.', OPCODE.ALREADY_EXISTS);
+      throw RESULT.ALREADY_USING_EMAIL();
     }
 
     if (phone && user.phone !== phone && isExists[1]) {
-      throw new InternalError(
-        '사용중인 전화번호입니다.',
-        OPCODE.ALREADY_EXISTS
-      );
+      throw RESULT.ALREADY_USING_PHONE();
     }
 
     const data: Prisma.PlatformUserModelUpdateInput = {
@@ -214,13 +199,7 @@ export class User {
     platformUserId: string
   ): Promise<PlatformUserModel> {
     const user = await User.getUser(platform, platformUserId);
-    if (!user) {
-      throw new InternalError(
-        '해당 사용자를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!user) throw RESULT.CANNOT_FIND_USER();
     return user;
   }
 
@@ -229,13 +208,7 @@ export class User {
     email: string
   ): Promise<PlatformUserModel> {
     const user = await User.getUserByEmail(email);
-    if (!user) {
-      throw new InternalError(
-        '해당 사용자를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!user) throw RESULT.CANNOT_FIND_USER();
     return user;
   }
 
@@ -259,13 +232,7 @@ export class User {
     phone: string
   ): Promise<PlatformUserModel> {
     const user = await User.getUserByPhone(phone);
-    if (!user) {
-      throw new InternalError(
-        '해당 사용자를 찾을 수 없습니다.',
-        OPCODE.NOT_FOUND
-      );
-    }
-
+    if (!user) throw RESULT.CANNOT_FIND_USER();
     return user;
   }
 
