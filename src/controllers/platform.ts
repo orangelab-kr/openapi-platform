@@ -23,8 +23,8 @@ export class Platform {
     const schema = Joi.object({ name: PATTERN.PLATFORM.NAME });
     const { platformId, name } = platform;
     const data = await schema.validateAsync(props);
-    if (name !== props.name) {
-      const exists = await Platform.isExistsPlatformName(name);
+    if (name !== data.name) {
+      const exists = await Platform.isExistsPlatformName(data.name);
       if (exists) throw RESULT.ALREADY_EXISTS_PLATFORM_NAME();
     }
 
@@ -76,12 +76,13 @@ export class Platform {
     const { take, skip, search, orderByField, orderBySort } =
       await schema.validateAsync(props);
     const orderBy = { [orderByField]: orderBySort };
-    const where: Prisma.PlatformModelWhereInput = {
-      OR: [
+    const where: Prisma.PlatformModelWhereInput = {};
+    if (search) {
+      where.OR = [
         { platformId: { contains: search } },
         { name: { contains: search } },
-      ],
-    };
+      ];
+    }
 
     const [total, platforms] = await prisma.$transaction([
       prisma.platformModel.count({ where }),

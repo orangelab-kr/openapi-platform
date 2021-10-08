@@ -5,7 +5,7 @@ export const PATTERN = {
   PAGINATION: {
     TAKE: Joi.number().default(10).optional(),
     SKIP: Joi.number().default(0).optional(),
-    SEARCH: Joi.string().allow('').optional(),
+    SEARCH: Joi.string().default('').allow('').optional(),
     ORDER_BY: {
       FIELD: Joi.string().optional(),
       SORT: Joi.string().valid('asc', 'desc').default('asc').optional(),
