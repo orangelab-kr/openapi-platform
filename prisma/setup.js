@@ -172,6 +172,12 @@ async function main() {
     '킥보드 목록을 조회합니다.'
   );
 
+  await setDefaultPermission(
+    'kickboards.timeline',
+    '킥보드 타임라인',
+    '마지막 사용자의 이동 동선을 보여줍니다.'
+  );
+
   /** 위치 */
   await setDefaultPermission(
     'regions.geofenceByLocation',
@@ -381,6 +387,13 @@ async function main() {
     'webhook.requests.histories.view',
     '웹훅 요청기록 조회',
     '웹훅 요청기록을 조회합니다.'
+  );
+
+  /** 플랫폼 - 조회 */
+  await setDefaultPermission(
+    'franchises.view',
+    '프렌차이즈 조회',
+    '프렌차이즈를 조회합니다.'
   );
 
   await createAllPermissionGroup();
