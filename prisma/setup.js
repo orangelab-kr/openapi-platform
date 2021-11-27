@@ -260,6 +260,12 @@ async function main() {
   );
 
   await setDefaultPermission(
+    'rides.maxSpeed',
+    '킥보드 최대속도',
+    '이용중인 킥보드의 최대 속도를 제어합니다.'
+  );
+
+  await setDefaultPermission(
     'rides.terminate',
     '라이드 종료',
     '라이드를 종료합니다.'
@@ -281,6 +287,12 @@ async function main() {
     'rides.discount',
     '할인 변경',
     '라이드 중 할인을 변경할 수 있습니다.'
+  );
+
+  await setDefaultPermission(
+    'rides.helmet',
+    '헬멧 대여',
+    '헬멧을 대여하거나 반납 또는 이용 관리를 할 수 있습니다.'
   );
 
   await setDefaultPermission(
