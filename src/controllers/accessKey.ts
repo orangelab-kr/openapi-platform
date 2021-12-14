@@ -113,7 +113,11 @@ export class AccessKey {
 
     const { platformId } = platform;
     const { name, permissionGroupId } = await schema.validateAsync(props);
-    await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
+    await PermissionGroup.getPermissionGroupOrThrow(
+      permissionGroupId,
+      platform
+    );
+
     const accessKey = await prisma.platformAccessKeyModel.create({
       data: {
         name,
@@ -129,7 +133,14 @@ export class AccessKey {
   public static async getAccessKeyOrThrow(
     platform: PlatformModel,
     platformAccessKeyId: string
-  ): Promise<PlatformAccessKeyModel> {
+  ): Promise<
+    | PlatformAccessKeyModel & {
+        platform: PlatformModel;
+        permissionGroup?: PermissionGroupModel & {
+          permissions?: PermissionModel[];
+        };
+      }
+  > {
     const accessKey = await AccessKey.getAccessKey(
       platform,
       platformAccessKeyId
@@ -143,7 +154,15 @@ export class AccessKey {
   public static async getAccessKey(
     platform: PlatformModel,
     platformAccessKeyId: string
-  ): Promise<PlatformAccessKeyModel | null> {
+  ): Promise<
+    | (PlatformAccessKeyModel & {
+        platform: PlatformModel;
+        permissionGroup?: PermissionGroupModel & {
+          permissions: PermissionModel[];
+        };
+      })
+    | null
+  > {
     const { platformId } = platform;
     const accessKey = await prisma.platformAccessKeyModel.findFirst({
       where: {
@@ -161,7 +180,7 @@ export class AccessKey {
 
   /** 액세스 키의 이름 또는 권한 그룹을 변경합니다. */
   public static async modifyAccessKey(
-    platformAccessKey: PlatformAccessKeyModel,
+    platformAccessKey: PlatformAccessKeyModel & { platform: PlatformModel },
     props: { name: string; permissionGroupId: string }
   ): Promise<PlatformAccessKeyModel> {
     const schema = Joi.object({
@@ -174,7 +193,7 @@ export class AccessKey {
       props
     );
 
-    const { platformAccessKeyId } = platformAccessKey;
+    const { platformAccessKeyId, platform } = platformAccessKey;
     const where: Prisma.PlatformAccessKeyModelWhereUniqueInput = {
       platformAccessKeyId,
     };
@@ -185,7 +204,11 @@ export class AccessKey {
     };
 
     if (permissionGroupId) {
-      await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
+      await PermissionGroup.getPermissionGroupOrThrow(
+        permissionGroupId,
+        platform
+      );
+
       data.permissionGroup = { connect: { permissionGroupId } };
     }
 

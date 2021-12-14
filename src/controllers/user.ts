@@ -58,7 +58,10 @@ export class User {
 
     if (isExists[0]) throw RESULT.ALREADY_USING_EMAIL();
     if (isExists[1]) throw RESULT.ALREADY_USING_PHONE();
-    await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
+    await PermissionGroup.getPermissionGroupOrThrow(
+      permissionGroupId,
+      platform
+    );
 
     const { platformId } = platform;
     const identity = hashSync(password, 10);
@@ -78,7 +81,7 @@ export class User {
 
   /** 사용자를 수정합니다. */
   public static async modifyUser(
-    user: PlatformUserModel,
+    user: PlatformUserModel & { platform: PlatformModel },
     props: {
       name: string;
       email: string;
@@ -110,6 +113,7 @@ export class User {
       throw RESULT.ALREADY_USING_PHONE();
     }
 
+    const { platformUserId, platform } = user;
     const data: Prisma.PlatformUserModelUpdateInput = {
       name,
       email,
@@ -117,7 +121,11 @@ export class User {
     };
 
     if (permissionGroupId) {
-      await PermissionGroup.getPermissionGroupOrThrow(permissionGroupId);
+      await PermissionGroup.getPermissionGroupOrThrow(
+        permissionGroupId,
+        platform
+      );
+
       data.permissionGroup = { connect: { permissionGroupId } };
     }
 
@@ -130,7 +138,6 @@ export class User {
       };
     }
 
-    const { platformUserId } = user;
     const where = { platformUserId };
     await prisma.platformUserModel.update({ where, data });
     return user;
@@ -194,7 +201,14 @@ export class User {
   public static async getUserOrThrow(
     platform: PlatformModel,
     platformUserId: string
-  ): Promise<PlatformUserModel> {
+  ): Promise<
+    PlatformUserModel & {
+      platform: PlatformModel;
+      permissionGroup?: PermissionGroupModel & {
+        permissions: PermissionModel[];
+      };
+    }
+  > {
     const user = await User.getUser(platform, platformUserId);
     if (!user) throw RESULT.CANNOT_FIND_USER();
     return user;
@@ -252,7 +266,15 @@ export class User {
   public static async getUser(
     platform: PlatformModel,
     platformUserId: string
-  ): Promise<PlatformUserModel | null> {
+  ): Promise<
+    | (PlatformUserModel & {
+        platform: PlatformModel;
+        permissionGroup?: PermissionGroupModel & {
+          permissions: PermissionModel[];
+        };
+      })
+    | null
+  > {
     const { platformId } = platform;
     const user = await prisma.platformUserModel.findFirst({
       where: { platformUserId, platform: { platformId } },

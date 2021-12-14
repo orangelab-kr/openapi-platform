@@ -10,12 +10,12 @@ declare global {
     interface Request {
       permissionIds: string[];
       platform: PlatformModel;
-      platformUser: PlatformUserModel;
-      platformAccessKey: PlatformAccessKeyModel;
+      platformUser: PlatformUserModel & { platform: PlatformModel };
+      platformAccessKey: PlatformAccessKeyModel & { platform: PlatformModel };
       loggined: {
         platform: PlatformModel;
-        platformUser: PlatformUserModel;
-        platformAccessKey: PlatformAccessKeyModel;
+        platformUser: PlatformUserModel & { platform: PlatformModel };
+        platformAccessKey: PlatformAccessKeyModel & { platform: PlatformModel };
       };
       internal: {
         sub: string;
@@ -25,8 +25,8 @@ declare global {
         iat: Date;
         exp: Date;
         platform: PlatformModel;
-        platformUser: PlatformUserModel;
-        platformAccessKey: PlatformAccessKeyModel;
+        platformUser: PlatformUserModel & { platform: PlatformModel };
+        platformAccessKey: PlatformAccessKeyModel & { platform: PlatformModel };
       };
     }
   }

@@ -2,6 +2,11 @@ import { PermissionGroupModel, PlatformModel, Prisma } from '@prisma/client';
 import { Joi, PATTERN, prisma, RESULT } from '..';
 
 export class PermissionGroup {
+  public static defaultInclude: Prisma.PermissionGroupModelInclude = {
+    platform: true,
+    permissions: true,
+  };
+
   /** 권한 그룹을 불러옵니다. 없으면 오류를 발생합니다. */
   public static async getPermissionGroupOrThrow(
     permissionGroupId: string,
@@ -21,19 +26,14 @@ export class PermissionGroup {
     permissionGroupId: string,
     platform?: PlatformModel
   ): Promise<PermissionGroupModel | null> {
-    const OR: any = [{ platformId: null }];
+    const where: Prisma.PermissionGroupModelWhereInput = { permissionGroupId };
     if (platform) {
       const { platformId } = platform;
-      OR.push({ platformId });
+      where.OR = [{ platformId: null }, { platformId }];
     }
 
-    const { findFirst } = prisma.permissionGroupModel;
-    const permissionGroup = await findFirst({
-      where: { permissionGroupId, OR },
-      include: { platform: true, permissions: true },
-    });
-
-    return permissionGroup;
+    const include = PermissionGroup.defaultInclude;
+    return prisma.permissionGroupModel.findFirst({ where, include });
   }
 
   /** 권한 그룹 목록을 가져옵니다. */
