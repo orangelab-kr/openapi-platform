@@ -168,8 +168,8 @@ async function main() {
 
   await setDefaultPermission(
     'kickboards.view',
-    '킥보드 목록',
-    '킥보드 목록을 조회합니다.'
+    '킥보드 조회',
+    '킥보드를 조회합니다.'
   );
 
   await setDefaultPermission(
